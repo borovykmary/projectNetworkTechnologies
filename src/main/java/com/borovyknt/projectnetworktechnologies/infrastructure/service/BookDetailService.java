@@ -16,8 +16,24 @@ public class BookDetailService {
         this.bookDetailRepository = bookDetailRepository;
     }
 
+    public BookDetailEntity getOne(long id){
+        return bookDetailRepository.findById(id).orElseThrow(() -> new RuntimeException("Book detail not found"));
+    }
+
     public List<BookDetailEntity> getAll(){
         return bookDetailRepository.findAll();
+    }
+
+    public BookDetailEntity create(BookDetailEntity bookDetail){
+        return bookDetailRepository.save(bookDetail);
+    }
+
+    public void delete(long id){
+        if(bookDetailRepository.existsById(id)) {
+            bookDetailRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Book detail not found");
+        }
     }
 }
 

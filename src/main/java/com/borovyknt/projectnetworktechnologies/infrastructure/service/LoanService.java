@@ -16,7 +16,23 @@ public class LoanService {
         this.loanRepository = loanRepository;
     }
 
+    public LoanEntity getOne(long id){
+        return loanRepository.findById(id).orElseThrow(() -> new RuntimeException("Loan not found"));
+    }
+
     public List<LoanEntity> getAll(){
         return loanRepository.findAll();
+    }
+
+    public LoanEntity create(LoanEntity loan){
+        return loanRepository.save(loan);
+    }
+
+    public void delete(long id){
+        if(loanRepository.existsById(id)) {
+            loanRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Loan not found");
+        }
     }
 }

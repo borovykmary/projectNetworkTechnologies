@@ -16,7 +16,23 @@ public class ReviewService {
         this.reviewRepository = reviewRepository;
     }
 
+    public ReviewEntity getOne(long id){
+        return reviewRepository.findById(id).orElseThrow(() -> new RuntimeException("Review not found"));
+    }
+
     public List<ReviewEntity> getAll(){
         return reviewRepository.findAll();
+    }
+
+    public ReviewEntity create(ReviewEntity review){
+        return reviewRepository.save(review);
+    }
+
+    public void delete(long id){
+        if(reviewRepository.existsById(id)) {
+            reviewRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Review not found");
+        }
     }
 }
