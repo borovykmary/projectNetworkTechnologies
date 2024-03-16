@@ -1,5 +1,8 @@
 package com.borovyknt.projectnetworktechnologies.infrastructure.service;
 
+import com.borovyknt.projectnetworktechnologies.controller.dto.loan.CreateLoanDto;
+import com.borovyknt.projectnetworktechnologies.controller.dto.loan.CreateLoanResponseDto;
+import com.borovyknt.projectnetworktechnologies.controller.dto.loan.GetLoanDto;
 import com.borovyknt.projectnetworktechnologies.infrastructure.entity.LoanEntity;
 import com.borovyknt.projectnetworktechnologies.infrastructure.repository.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +19,39 @@ public class LoanService {
         this.loanRepository = loanRepository;
     }
 
-    public LoanEntity getOne(long id){
-        return loanRepository.findById(id).orElseThrow(() -> new RuntimeException("Loan not found"));
+    public GetLoanDto getOne(long id){
+        var loanEntity = loanRepository.findById(id).orElseThrow(() -> new RuntimeException("Loan not found"));
+        return new GetLoanDto(
+                loanEntity.getLoanId(),
+                loanEntity.getLoanDate(),
+                loanEntity.getReturnDate(),
+                loanEntity.getDueDate()
+        );
     }
 
-    public List<LoanEntity> getAll(){
-        return loanRepository.findAll();
+    public List<GetLoanDto> getAll(){
+        var loans = loanRepository.findAll();
+        return loans.stream().map((loan) -> new GetLoanDto(
+                loan.getLoanId(),
+                loan.getLoanDate(),
+                loan.getReturnDate(),
+                loan.getDueDate()
+        )).toList();
     }
 
-    public LoanEntity create(LoanEntity loan){
-        return loanRepository.save(loan);
+    public CreateLoanResponseDto create(CreateLoanDto loan){
+        var loanEntity = new LoanEntity();
+        loanEntity.setLoanDate(loan.getLoanDate());
+        loanEntity.setReturnDate(loan.getReturnDate());
+        loanEntity.setDueDate(loan.getDueDate());
+
+        var newLoan = loanRepository.save(loanEntity);
+        return new CreateLoanResponseDto(
+                newLoan.getLoanId(),
+                newLoan.getLoanDate(),
+                newLoan.getReturnDate(),
+                newLoan.getDueDate()
+        );
     }
 
     public void delete(long id){

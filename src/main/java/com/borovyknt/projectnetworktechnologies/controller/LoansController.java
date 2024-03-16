@@ -1,10 +1,15 @@
 package com.borovyknt.projectnetworktechnologies.controller;
 
+import com.borovyknt.projectnetworktechnologies.controller.dto.loan.CreateLoanDto;
+import com.borovyknt.projectnetworktechnologies.controller.dto.loan.CreateLoanResponseDto;
+import com.borovyknt.projectnetworktechnologies.controller.dto.loan.GetLoanDto;
 import com.borovyknt.projectnetworktechnologies.infrastructure.entity.LoanEntity;
 import com.borovyknt.projectnetworktechnologies.infrastructure.repository.LoanRepository;
 import com.borovyknt.projectnetworktechnologies.infrastructure.service.BookService;
 import com.borovyknt.projectnetworktechnologies.infrastructure.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,22 +25,24 @@ public class LoansController {
     }
 
     @GetMapping
-    public List<LoanEntity> getAllLoans(){
+    public List<GetLoanDto> getAllLoans(){
         return loanService.getAll();
     }
 
     @GetMapping("/{id}")
-    public LoanEntity getOne(@PathVariable long id){
+    public GetLoanDto getOne(@PathVariable long id){
         return loanService.getOne(id);
     }
 
     @PostMapping
-    public LoanEntity create(@RequestBody LoanEntity loan){
-        return loanService.create(loan);
+    public ResponseEntity<CreateLoanResponseDto> create(@RequestBody CreateLoanDto loan){
+        var newLoan = loanService.create(loan);
+        return new ResponseEntity<>(newLoan, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable long id){
+    public ResponseEntity<Void> delete(@PathVariable long id){
         loanService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

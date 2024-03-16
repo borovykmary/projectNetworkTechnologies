@@ -1,5 +1,8 @@
 package com.borovyknt.projectnetworktechnologies.controller;
 
+import com.borovyknt.projectnetworktechnologies.controller.dto.book.CreateBookDto;
+import com.borovyknt.projectnetworktechnologies.controller.dto.book.CreateBookResponseDto;
+import com.borovyknt.projectnetworktechnologies.controller.dto.book.GetBookDto;
 import com.borovyknt.projectnetworktechnologies.infrastructure.entity.BookEntity;
 import com.borovyknt.projectnetworktechnologies.infrastructure.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +23,17 @@ public class BooksController {
     }
 
     @GetMapping
-    public List<BookEntity> getAllBooks(){
+    public List<GetBookDto> getAllBooks(){
         return bookService.getAll();
     }
 
     @GetMapping("/{id}")
-    public BookEntity getOne(@PathVariable long id){
+    public GetBookDto getOne(@PathVariable long id){
         return bookService.getOne(id);
     }
 
     @PostMapping
-    public ResponseEntity<BookEntity> create(@RequestBody BookEntity book){
+    public ResponseEntity<CreateBookResponseDto> create(@RequestBody CreateBookDto book){
         var newBook = bookService.create(book);
         return new ResponseEntity<>(newBook, HttpStatus.CREATED);
     }
