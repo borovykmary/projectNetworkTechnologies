@@ -1,5 +1,6 @@
 package com.borovyknt.projectnetworktechnologies.infrastructure.entity;
 
+import com.borovyknt.projectnetworktechnologies.commontypes.UserRole;
 import jakarta.persistence.*;
 
 @Entity
@@ -7,24 +8,8 @@ import jakarta.persistence.*;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "userId")
     private int userId;
-
-    public String getUsername() {
-        return username;
-    }
-
-    @Basic
-    @Column(name = "username", unique = true)
-    private String username;
-
-    @Basic
-    @Column(name = "password")
-    private String password;
-
-    @Basic
-    @Column(name = "role")
-    private String role;
 
     @Basic
     @Column(name = "email")
@@ -34,32 +19,24 @@ public class UserEntity {
     @Column(name = "name")
     private String name;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private AuthEntity auth;
+
+    public UserEntity(int userId, String email, String name) {
+        this.userId = userId;
+        this.email = email;
+        this.name = name;
+    }
+
+    public UserEntity() {
+    }
+
     public int getUserId() {
         return userId;
     }
 
     public void setUserId(int userId) {
         this.userId = userId;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getEmail() {
@@ -77,4 +54,5 @@ public class UserEntity {
     public void setName(String name) {
         this.name = name;
     }
+
 }

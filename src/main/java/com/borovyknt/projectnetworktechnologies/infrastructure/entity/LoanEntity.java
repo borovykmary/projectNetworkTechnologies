@@ -17,7 +17,7 @@ public class LoanEntity {
     private BookEntity book;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "userId", referencedColumnName = "userId")
     private UserEntity user;
 
     @Basic
