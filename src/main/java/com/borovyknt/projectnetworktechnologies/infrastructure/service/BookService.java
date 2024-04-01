@@ -65,6 +65,18 @@ public class BookService {
                 newBook.getYearPublished(),
                 newBook.getAvailableCopies());
     }
+    public List<GetBookDto> search(String keyword) {
+        var books = bookRepository.findByTitleOrAuthor(keyword, keyword);
+        return books.stream().map((book) -> new GetBookDto(
+                book.getId(),
+                book.getIsbn(),
+                book.getTitle(),
+                book.getAuthor(),
+                book.getPublisher(),
+                book.getYearPublished(),
+                book.getAvailableCopies() > 0
+        )).collect(Collectors.toList());
+    }
 
     public void delete(long id){
 

@@ -32,6 +32,18 @@ public class LoanEntity {
     @Column(name = "return_date")
     private Date returnDate;
 
+    @Basic
+    @Column(name = "status")
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public int getLoanId() {
         return loanId;
     }

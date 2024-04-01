@@ -10,6 +10,7 @@ import com.borovyknt.projectnetworktechnologies.infrastructure.service.LoanServi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,15 +35,48 @@ public class LoansController {
         return loanService.getOne(id);
     }
 
-    @PostMapping
-    public ResponseEntity<CreateLoanResponseDto> create(@RequestBody CreateLoanDto loan){
-        var newLoan = loanService.create(loan);
+   /* @PostMapping
+    public ResponseEntity<CreateLoanResponseDto> create(@RequestBody CreateLoanDto loan, @PathVariable long bookId){
+        var newLoan = loanService.create(loan, bookId);
         return new ResponseEntity<>(newLoan, HttpStatus.CREATED);
     }
+    */
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable long id){
         loanService.delete(id);
         return ResponseEntity.noContent().build();
     }
+    @PostMapping("/{bookId}/borrow/{userId}")
+    public ResponseEntity<CreateLoanResponseDto> borrowBook(@RequestBody CreateLoanDto loan, @PathVariable String bookId, @PathVariable String userId){
+        var bookIdlong = Long.parseLong(bookId.substring(1, bookId.length() - 1));
+        var userIdlong = Long.parseLong(userId.substring(1, userId.length() - 1));
+
+        var newLoan = loanService.borrowBook(loan, bookIdlong, userIdlong);
+        return new ResponseEntity<>(newLoan, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{loanId}/return")
+    public ResponseEntity<Void> returnBook(@PathVariable String loanId){
+        var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
+        loanService.returnBook(loanIdLong);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{loanId}/process")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> processLoan(@PathVariable String loanId){
+        var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
+        loanService.processLoan(loanIdLong);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{loanId}/return/process")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> processReturn(@PathVariable String loanId){
+        var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
+        loanService.processReturn(loanIdLong);
+        return ResponseEntity.noContent().build();
+    }
+
 }

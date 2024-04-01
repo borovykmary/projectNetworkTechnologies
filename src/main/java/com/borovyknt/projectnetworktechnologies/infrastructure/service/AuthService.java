@@ -45,6 +45,7 @@ public class AuthService {
         userRepository.save(userEntity);
 
         AuthEntity authEntity = new AuthEntity();
+
         String hashedPassword = passwordEncoder.encode(dto.getPassword());
         authEntity.setPassword(hashedPassword);
         authEntity.setUsername(dto.getUsername());
@@ -62,7 +63,6 @@ public class AuthService {
             throw WrongPasswordError.create(dto.getPassword());
         }
         String token = jwtService.generateToken(authEntity);
-        UserRole userRole = jwtService.extractRole(token);
-        return new LoginResponseDto(userRole.name());
+        return new LoginResponseDto(token);
     }
 }
