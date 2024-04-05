@@ -1,13 +1,16 @@
 package com.borovyknt.projectnetworktechnologies.controller;
 
-import com.borovyknt.projectnetworktechnologies.controller.dto.loan.CreateLoanDto;
-import com.borovyknt.projectnetworktechnologies.controller.dto.loan.CreateLoanResponseDto;
-import com.borovyknt.projectnetworktechnologies.controller.dto.loan.GetLoanDto;
+import com.borovyknt.projectnetworktechnologies.controller.dto.loan.*;
 import com.borovyknt.projectnetworktechnologies.infrastructure.entity.LoanEntity;
 import com.borovyknt.projectnetworktechnologies.infrastructure.repository.LoanRepository;
+import com.borovyknt.projectnetworktechnologies.infrastructure.repository.UserRepository;
 import com.borovyknt.projectnetworktechnologies.infrastructure.service.BookService;
+import com.borovyknt.projectnetworktechnologies.infrastructure.service.JwtService;
 import com.borovyknt.projectnetworktechnologies.infrastructure.service.LoanService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,10 +22,14 @@ import java.util.List;
 @RequestMapping("/api/loans")
 public class LoansController {
     private final LoanService loanService;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     @Autowired
-    public LoansController(LoanService loanService) {
+    public LoansController(LoanService loanService, UserRepository userRepository, JwtService jwtService) {
         this.loanService = loanService;
+        this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
     @GetMapping
@@ -35,32 +42,42 @@ public class LoansController {
         return loanService.getOne(id);
     }
 
-   /* @PostMapping
-    public ResponseEntity<CreateLoanResponseDto> create(@RequestBody CreateLoanDto loan, @PathVariable long bookId){
-        var newLoan = loanService.create(loan, bookId);
-        return new ResponseEntity<>(newLoan, HttpStatus.CREATED);
-    }
-    */
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable long id){
         loanService.delete(id);
         return ResponseEntity.noContent().build();
     }
-    @PostMapping("/{bookId}/borrow/{userId}")
-    public ResponseEntity<CreateLoanResponseDto> borrowBook(@RequestBody CreateLoanDto loan, @PathVariable String bookId, @PathVariable String userId){
+    @PostMapping("/{bookId}/borrow")
+    public ResponseEntity<CreateLoanResponseDto> borrowBook(@RequestBody CreateLoanDto loan, HttpServletRequest request, @PathVariable String bookId){
         var bookIdlong = Long.parseLong(bookId.substring(1, bookId.length() - 1));
-        var userIdlong = Long.parseLong(userId.substring(1, userId.length() - 1));
 
-        var newLoan = loanService.borrowBook(loan, bookIdlong, userIdlong);
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        Integer userId = jwtService.extractUserId(token);
+        var userEntity = userRepository.findByuserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        var newLoan = loanService.borrowBook(loan, bookIdlong, userEntity);
         return new ResponseEntity<>(newLoan, HttpStatus.CREATED);
     }
 
     @PostMapping("/{loanId}/return")
-    public ResponseEntity<Void> returnBook(@PathVariable String loanId){
+    public ResponseEntity<CreateReturnLoanResponseDto> returnBook(@PathVariable String loanId, HttpServletRequest request, @RequestBody CreateReturnLoanDto returnLoanDto){
         var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
-        loanService.returnBook(loanIdLong);
-        return ResponseEntity.noContent().build();
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        Integer userId = jwtService.extractUserId(token);
+        var userEntity = userRepository.findByuserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        var newReturnLoan = loanService.returnBook(returnLoanDto, loanIdLong, userEntity);
+        return new ResponseEntity<>(newReturnLoan, HttpStatus.OK);
     }
 
     @PostMapping("/{loanId}/process")
@@ -68,7 +85,7 @@ public class LoansController {
     public ResponseEntity<Void> processLoan(@PathVariable String loanId){
         var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
         loanService.processLoan(loanIdLong);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/{loanId}/return/process")
@@ -76,7 +93,7 @@ public class LoansController {
     public ResponseEntity<Void> processReturn(@PathVariable String loanId){
         var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
         loanService.processReturn(loanIdLong);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }

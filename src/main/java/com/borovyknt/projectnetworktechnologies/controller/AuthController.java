@@ -38,9 +38,4 @@ public class AuthController {
         this.authService = authService;
     }
 
-    public void signIn() {
-    }
-
-    public void signUp() {
-    }
 }
