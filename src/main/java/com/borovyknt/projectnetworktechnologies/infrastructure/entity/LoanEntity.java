@@ -1,5 +1,6 @@
 package com.borovyknt.projectnetworktechnologies.infrastructure.entity;
 
+import com.borovyknt.projectnetworktechnologies.commontypes.LoanStatus;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -32,15 +33,15 @@ public class LoanEntity {
     @Column(name = "return_date")
     private Date returnDate;
 
-    @Basic
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private LoanStatus status;
 
-    public String getStatus() {
+    public LoanStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(LoanStatus status) {
         this.status = status;
     }
 

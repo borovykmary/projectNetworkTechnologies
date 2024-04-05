@@ -22,7 +22,7 @@ public class ReviewEntity {
 
     @Basic
     @Column(name = "rating")
-    private int rating;
+    private double rating;
 
     @Basic
     @Column(name = "comment")
@@ -56,11 +56,11 @@ public class ReviewEntity {
         this.user = user;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 

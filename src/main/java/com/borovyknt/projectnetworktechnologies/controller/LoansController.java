@@ -1,14 +1,11 @@
 package com.borovyknt.projectnetworktechnologies.controller;
 
 import com.borovyknt.projectnetworktechnologies.controller.dto.loan.*;
-import com.borovyknt.projectnetworktechnologies.infrastructure.entity.LoanEntity;
-import com.borovyknt.projectnetworktechnologies.infrastructure.repository.LoanRepository;
 import com.borovyknt.projectnetworktechnologies.infrastructure.repository.UserRepository;
-import com.borovyknt.projectnetworktechnologies.infrastructure.service.BookService;
 import com.borovyknt.projectnetworktechnologies.infrastructure.service.JwtService;
 import com.borovyknt.projectnetworktechnologies.infrastructure.service.LoanService;
+import com.borovyknt.projectnetworktechnologies.infrastructure.service.customExceptions.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,7 +35,7 @@ public class LoansController {
     }
 
     @GetMapping("/{id}")
-    public GetLoanDto getOne(@PathVariable long id){
+    public GetLoanDto getOne(@PathVariable int id){
         return loanService.getOne(id);
     }
 
@@ -58,7 +55,7 @@ public class LoansController {
         }
         Integer userId = jwtService.extractUserId(token);
         var userEntity = userRepository.findByuserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> NotFoundException.create("User", userId));
 
         var newLoan = loanService.borrowBook(loan, bookIdlong, userEntity);
         return new ResponseEntity<>(newLoan, HttpStatus.CREATED);
@@ -74,7 +71,7 @@ public class LoansController {
         }
         Integer userId = jwtService.extractUserId(token);
         var userEntity = userRepository.findByuserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> NotFoundException.create("User", userId));
 
         var newReturnLoan = loanService.returnBook(returnLoanDto, loanIdLong, userEntity);
         return new ResponseEntity<>(newReturnLoan, HttpStatus.OK);

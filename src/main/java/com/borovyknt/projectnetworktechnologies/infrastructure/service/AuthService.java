@@ -1,6 +1,5 @@
 package com.borovyknt.projectnetworktechnologies.infrastructure.service;
 
-import com.borovyknt.projectnetworktechnologies.commontypes.UserRole;
 import com.borovyknt.projectnetworktechnologies.controller.dto.login.LoginDto;
 import com.borovyknt.projectnetworktechnologies.controller.dto.login.LoginResponseDto;
 import com.borovyknt.projectnetworktechnologies.controller.dto.register.RegisterDto;
@@ -9,8 +8,8 @@ import com.borovyknt.projectnetworktechnologies.infrastructure.entity.AuthEntity
 import com.borovyknt.projectnetworktechnologies.infrastructure.entity.UserEntity;
 import com.borovyknt.projectnetworktechnologies.infrastructure.repository.AuthRepository;
 import com.borovyknt.projectnetworktechnologies.infrastructure.repository.UserRepository;
-import com.borovyknt.projectnetworktechnologies.infrastructure.service.error.UserAlreadyExistsError;
-import com.borovyknt.projectnetworktechnologies.infrastructure.service.error.WrongPasswordError;
+import com.borovyknt.projectnetworktechnologies.infrastructure.service.customExceptions.UserAlreadyExistsError;
+import com.borovyknt.projectnetworktechnologies.infrastructure.service.customExceptions.WrongPasswordError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

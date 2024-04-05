@@ -1,4 +1,4 @@
-package com.borovyknt.projectnetworktechnologies.infrastructure.service.error;
+package com.borovyknt.projectnetworktechnologies.infrastructure.service.customExceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;

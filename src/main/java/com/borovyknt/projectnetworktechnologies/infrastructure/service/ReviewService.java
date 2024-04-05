@@ -1,6 +1,5 @@
 package com.borovyknt.projectnetworktechnologies.infrastructure.service;
 
-import com.borovyknt.projectnetworktechnologies.controller.dto.loan.GetLoanDto;
 import com.borovyknt.projectnetworktechnologies.controller.dto.review.CreateReviewDto;
 import com.borovyknt.projectnetworktechnologies.controller.dto.review.CreateReviewResponseDto;
 import com.borovyknt.projectnetworktechnologies.controller.dto.review.GetReviewDto;
@@ -9,10 +8,12 @@ import com.borovyknt.projectnetworktechnologies.infrastructure.entity.ReviewEnti
 import com.borovyknt.projectnetworktechnologies.infrastructure.entity.UserEntity;
 import com.borovyknt.projectnetworktechnologies.infrastructure.repository.LoanRepository;
 import com.borovyknt.projectnetworktechnologies.infrastructure.repository.ReviewRepository;
+import com.borovyknt.projectnetworktechnologies.infrastructure.service.customExceptions.AlreadyReviewedException;
+import com.borovyknt.projectnetworktechnologies.infrastructure.service.customExceptions.NotBorrowedException;
+import com.borovyknt.projectnetworktechnologies.infrastructure.service.customExceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class ReviewService {
     }
 
     public GetReviewDto getOne(long id){
-        var reviewEntity = reviewRepository.findById(id).orElseThrow(() -> new RuntimeException("Review not found"));
+        var reviewEntity = reviewRepository.findById(id).orElseThrow(() -> NotFoundException.create("Review", id));
         return new GetReviewDto(
                 reviewEntity.getReviewId(),
                 reviewEntity.getRating(),
@@ -49,11 +50,11 @@ public class ReviewService {
 
     public CreateReviewResponseDto create(CreateReviewDto review, UserEntity user, BookEntity book){
         if(reviewRepository.findByUserAndBook(user, book).isPresent()) {
-            throw new RuntimeException("User has already reviewed this book");
+            throw AlreadyReviewedException.create();
         }
 
         if(loanRepository.findByUserAndBook(user, book).isEmpty()) {
-            throw new RuntimeException("User has not borrowed this book");
+            throw NotBorrowedException.create();
         }
 
         var reviewEntity = new ReviewEntity();
@@ -74,7 +75,7 @@ public class ReviewService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteReview(long reviewId) {
-        var review = reviewRepository.findById(reviewId).orElseThrow(() -> new RuntimeException("Review not found"));
+        var review = reviewRepository.findById(reviewId).orElseThrow(() -> NotFoundException.create("Review", reviewId));
         reviewRepository.delete(review);
     }
 }

@@ -3,7 +3,6 @@ package com.borovyknt.projectnetworktechnologies.controller;
 import com.borovyknt.projectnetworktechnologies.controller.dto.book.CreateBookDto;
 import com.borovyknt.projectnetworktechnologies.controller.dto.book.CreateBookResponseDto;
 import com.borovyknt.projectnetworktechnologies.controller.dto.book.GetBookDto;
-import com.borovyknt.projectnetworktechnologies.infrastructure.entity.BookEntity;
 import com.borovyknt.projectnetworktechnologies.infrastructure.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

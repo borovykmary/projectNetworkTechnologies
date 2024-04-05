@@ -2,7 +2,6 @@ package com.borovyknt.projectnetworktechnologies.controller;
 
 import com.borovyknt.projectnetworktechnologies.infrastructure.entity.BookDetailEntity;
 import com.borovyknt.projectnetworktechnologies.infrastructure.service.BookDetailService;
-import com.borovyknt.projectnetworktechnologies.infrastructure.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

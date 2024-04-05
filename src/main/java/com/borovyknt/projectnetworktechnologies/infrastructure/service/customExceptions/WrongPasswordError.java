@@ -1,9 +1,7 @@
-package com.borovyknt.projectnetworktechnologies.infrastructure.service.error;
+package com.borovyknt.projectnetworktechnologies.infrastructure.service.customExceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.awt.geom.RectangularShape;
 
 public class WrongPasswordError extends RuntimeException{
     private WrongPasswordError(String message) {

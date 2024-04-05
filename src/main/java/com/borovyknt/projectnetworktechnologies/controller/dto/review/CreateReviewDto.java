@@ -4,12 +4,12 @@ import java.util.Date;
 
 public class CreateReviewDto {
 
-    private int rating;
+    private double rating;
     private String comment;
     private Date reviewDate;
-    private long bookId;
+    private int bookId;
 
-    public CreateReviewDto(int rating, String comment, Date reviewDate, long bookId) {
+    public CreateReviewDto(double rating, String comment, Date reviewDate, int bookId) {
         this.rating = rating;
         this.comment = comment;
         this.reviewDate = reviewDate;
@@ -19,18 +19,18 @@ public class CreateReviewDto {
     public CreateReviewDto() {
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
-    public long getBookId() {
+    public int getBookId() {
         return bookId;
     }
 
-    public void setBookId(long bookId) {
+    public void setBookId(int bookId) {
         this.bookId = bookId;
     }
 
-    public void setRating(int rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 

@@ -2,8 +2,6 @@ package com.borovyknt.projectnetworktechnologies.infrastructure.service;
 
 import com.borovyknt.projectnetworktechnologies.commontypes.UserRole;
 import com.borovyknt.projectnetworktechnologies.infrastructure.entity.AuthEntity;
-import com.borovyknt.projectnetworktechnologies.infrastructure.entity.UserEntity;
-import com.mysql.cj.sasl.ScramSha1SaslClient;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

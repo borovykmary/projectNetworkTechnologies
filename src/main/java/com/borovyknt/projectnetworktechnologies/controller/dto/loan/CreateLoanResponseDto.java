@@ -1,5 +1,7 @@
 package com.borovyknt.projectnetworktechnologies.controller.dto.loan;
 
+import com.borovyknt.projectnetworktechnologies.commontypes.LoanStatus;
+
 import java.util.Date;
 
 public class CreateLoanResponseDto {
@@ -7,9 +9,9 @@ public class CreateLoanResponseDto {
     private Date loanDate;
     private Date dueDate;
     private Date returnDate;
-    private String status;
+    private LoanStatus status;
 
-    public CreateLoanResponseDto(int loanId, Date loanDate, Date dueDate, Date returnDate, String status) {
+    public CreateLoanResponseDto(int loanId, Date loanDate, Date dueDate, Date returnDate, LoanStatus status) {
         this.loanId = loanId;
         this.loanDate = loanDate;
         this.dueDate = dueDate;
@@ -52,12 +54,11 @@ public class CreateLoanResponseDto {
         this.returnDate = returnDate;
     }
 
-    public String getStatus() {
+    public LoanStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(LoanStatus status) {
         this.status = status;
     }
-
 }
