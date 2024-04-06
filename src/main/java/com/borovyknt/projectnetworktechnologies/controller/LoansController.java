@@ -30,19 +30,34 @@ public class LoansController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<GetLoanDto> getAllLoans(){
         return loanService.getAll();
     }
 
     @GetMapping("/{id}")
-    public GetLoanDto getOne(@PathVariable int id){
-        return loanService.getOne(id);
+    @PreAuthorize("hasRole('ADMIN')")
+    public GetLoanDto getOne(@PathVariable String id){
+        var idLong = Long.parseLong(id.substring(1, id.length() - 1));
+        return loanService.getOne(idLong);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id){
-        loanService.delete(id);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable String id){
+        var idLong = Long.parseLong(id.substring(1, id.length() - 1));
+        loanService.delete(idLong);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/history")
+    public List<GetLoanDto> getLoanHistory(HttpServletRequest request){
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        Integer userId = jwtService.extractUserId(token);
+        return loanService.getLoanHistory(userId);
     }
     @PostMapping("/{bookId}/borrow")
     public ResponseEntity<CreateLoanResponseDto> borrowBook(@RequestBody CreateLoanDto loan, HttpServletRequest request, @PathVariable String bookId){

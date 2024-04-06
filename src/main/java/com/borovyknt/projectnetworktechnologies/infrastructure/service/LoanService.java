@@ -36,8 +36,20 @@ public class LoanService {
                 loanEntity.getLoanId(),
                 loanEntity.getLoanDate(),
                 loanEntity.getReturnDate(),
-                loanEntity.getDueDate()
+                loanEntity.getDueDate(),
+                loanEntity.getStatus()
         );
+    }
+
+    public List<GetLoanDto> getLoanHistory(int userId) {
+        var loans = loanRepository.findAllByUser_UserId(userId);
+        return loans.stream().map((loan) -> new GetLoanDto(
+                loan.getLoanId(),
+                loan.getLoanDate(),
+                loan.getReturnDate(),
+                loan.getDueDate(),
+                loan.getStatus()
+        )).toList();
     }
 
     public List<GetLoanDto> getAll(){
@@ -46,7 +58,8 @@ public class LoanService {
                 loan.getLoanId(),
                 loan.getLoanDate(),
                 loan.getReturnDate(),
-                loan.getDueDate()
+                loan.getDueDate(),
+                loan.getStatus()
         )).toList();
     }
     @Transactional
@@ -75,7 +88,6 @@ public class LoanService {
         );
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void processLoan(long loanId){
         var loanEntity = loanRepository.findById(loanId).orElseThrow(() -> NotFoundException.create("Loan", loanId));
         if(!loanEntity.getStatus().equals(LoanStatus.BORROW_REQUESTED)) {
@@ -108,7 +120,6 @@ public class LoanService {
 
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void processReturn(long loanId){
         var loanEntity = loanRepository.findById(loanId).orElseThrow(() -> NotFoundException.create("Loan", loanId));
         if (!loanEntity.getStatus().equals(LoanStatus.RETURN_REQUESTED)) {

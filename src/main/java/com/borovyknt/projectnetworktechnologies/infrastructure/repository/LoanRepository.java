@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface LoanRepository extends JpaRepository<LoanEntity, Long> {
     List<LoanEntity> findByUserAndBook(UserEntity user, BookEntity book);
+    List<LoanEntity> findAllByUser_UserId(int userId);
 }
