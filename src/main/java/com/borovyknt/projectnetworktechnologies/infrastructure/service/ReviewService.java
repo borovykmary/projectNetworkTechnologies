@@ -12,7 +12,6 @@ import com.borovyknt.projectnetworktechnologies.infrastructure.service.customExc
 import com.borovyknt.projectnetworktechnologies.infrastructure.service.customExceptions.NotBorrowedException;
 import com.borovyknt.projectnetworktechnologies.infrastructure.service.customExceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
