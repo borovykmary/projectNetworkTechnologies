@@ -5,6 +5,7 @@ import com.borovyknt.projectnetworktechnologies.controller.dto.book.CreateBookRe
 import com.borovyknt.projectnetworktechnologies.controller.dto.book.GetBookDto;
 import com.borovyknt.projectnetworktechnologies.infrastructure.entity.BookEntity;
 import com.borovyknt.projectnetworktechnologies.infrastructure.repository.BookRepository;
+import com.borovyknt.projectnetworktechnologies.infrastructure.service.customExceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class BookService {
     }
 
     public GetBookDto getOne(long id){
-        var bookEntity = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        var bookEntity = bookRepository.findById(id).orElseThrow(() -> NotFoundException.create("Book", id));
         return new GetBookDto(
                 bookEntity.getId(),
                 bookEntity.getIsbn(),

@@ -20,22 +20,24 @@ public class UsersController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<GetUserDto> getAllUsers(){
         return userService.getAll();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
-    public GetUserDto getOne(@PathVariable long id){
-        return userService.getOne(id);
+    @PreAuthorize("hasRole('ADMIN')")
+    public GetUserDto getOne(@PathVariable String id){
+        var idLong = Long.parseLong(id.substring(1, id.length() - 1));
+        return userService.getOne(idLong);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id){
-        userService.delete(id);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable String id){
+        var idLong = Long.parseLong(id.substring(1, id.length() - 1));
+        userService.delete(idLong);
         return ResponseEntity.noContent().build();
     }
 }

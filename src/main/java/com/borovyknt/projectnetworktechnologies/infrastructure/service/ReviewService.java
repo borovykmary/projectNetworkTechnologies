@@ -73,7 +73,6 @@ public class ReviewService {
         );
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void deleteReview(long reviewId) {
         var review = reviewRepository.findById(reviewId).orElseThrow(() -> NotFoundException.create("Review", reviewId));
         reviewRepository.delete(review);
