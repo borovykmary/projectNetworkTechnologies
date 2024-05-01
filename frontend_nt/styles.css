@@ -1,0 +1,29 @@
+/* Elegant Style CSS */
+
+body {
+    font-family: Arial, sans-serif;
+}
+.navbar {
+    background-color: #f8f9fa;
+    padding: 10px;
+}
+.container {
+    max-width: 500px;
+    margin: auto;
+    padding: 10px;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+}
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
+.form-group button {
+    padding: 10px 20px;
+    font-size: 16px;
+}

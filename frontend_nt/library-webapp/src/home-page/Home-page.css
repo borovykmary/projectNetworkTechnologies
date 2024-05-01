@@ -1,0 +1,27 @@
+.book-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.book-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+}
+
+.book-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.book-author {
+  font-style: italic;
+  margin-bottom: 5px;
+}
+
+.book-description {
+  margin-bottom: 10px;
+}
