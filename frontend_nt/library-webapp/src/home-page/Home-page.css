@@ -1,27 +1,53 @@
-.book-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+.AppBar {
+  margin-bottom: 20px;
 }
 
-.book-item {
-  margin-bottom: 15px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.Toolbar {
+  display: flex;
+  justify-content: space-between;
+}
 
+.section-title {
+  margin: 20px 0;
+  text-align: left;
+  font-weight: bold;
+  padding-left: 20px;
+}
+
+.book-list {
+  padding: 20px;
+}
+
+.book-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.book-card .MuiCardContent-root {
+  flex-grow: 1;
 }
 
 .book-title {
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .book-author {
-  font-style: italic;
-  margin-bottom: 5px;
+  color: #757575;
+}
+.Accordion {
+  width: 100%;
+  margin-top: auto;
 }
 
-.book-description {
-  margin-bottom: 10px;
+.AccordionDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.book-cover {
+  max-width: 100%;
+  height: auto;
 }
