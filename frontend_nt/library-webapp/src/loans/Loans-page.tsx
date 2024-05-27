@@ -48,7 +48,7 @@ const loans = [
     status: "Borrowed",
     dueDate: "2022-03-31",
     loanDate: "2022-03-01",
-    returnDate: "2022-03-31",
+    returnDate: " ",
     bookDetails: { title: "Prisoner of Azkaban", author: "J.K. Rowling" },
   },
   {
@@ -57,7 +57,7 @@ const loans = [
     status: "Borrowed",
     dueDate: "2022-04-30",
     loanDate: "2022-04-01",
-    returnDate: "2022-04-30",
+    returnDate: " ",
     bookDetails: { title: "Goblet of Fire", author: "J.K. Rowling" },
   },
 ];
@@ -65,6 +65,9 @@ const loans = [
 const LoansPage: React.FC = () => {
   const handleReturn = (id: number) => {
     console.log(`Return book with id ${id}`);
+  };
+  const handleAddReview = (id: number) => {
+    console.log(`Add review for book with id ${id}`);
   };
   const navigate = useNavigate();
   return (
@@ -106,10 +109,14 @@ const LoansPage: React.FC = () => {
         </Toolbar>
       </AppBar>
       {loans.map((loan) => (
-        <Card key={loan.loanId} className="loan-card">
+        <Card
+          key={loan.loanId}
+          className="loan-card"
+          sx={{ width: "80%", margin: "0 auto" }}
+        >
           <CardMedia
             component="img"
-            sx={{ width: 151 }}
+            sx={{ width: 100 }}
             image={loan.coverImageUrl}
             alt="Book cover"
           />
@@ -136,16 +143,23 @@ const LoansPage: React.FC = () => {
                 Borrowed: {loan.loanDate}
               </Typography>
               <Typography variant="subtitle1" color="text.secondary">
-                Return: {loan.returnDate}
+                Due date: {loan.dueDate}
               </Typography>
               <Typography variant="subtitle1" color="text.secondary">
-                Due date: {loan.dueDate}
+                Return: {loan.returnDate}
               </Typography>
               <Button
                 onClick={() => handleReturn(loan.loanId)}
                 variant="outlined"
+                disabled={loan.returnDate.trim() !== ""}
               >
                 Return
+              </Button>
+              <Button
+                onClick={() => handleAddReview(loan.loanId)}
+                variant="outlined"
+              >
+                Add Review
               </Button>
             </AccordionDetails>
           </Accordion>

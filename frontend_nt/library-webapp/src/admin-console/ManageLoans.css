@@ -1,0 +1,39 @@
+.manage-loans {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.loan-card {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 10px 0;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.loan-card .MuiCardMedia-root {
+  width: 100px;
+  height: 150px;
+  object-fit: cover;
+}
+
+.loan-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  margin-left: 20px;
+}
+
+.details-accordion {
+  flex: 1;
+  margin-left: 20px;
+}
+
+button {
+  margin-top: 10px;
+}

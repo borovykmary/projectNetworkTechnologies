@@ -387,6 +387,9 @@ const HomePage: React.FC = () => {
                         <Typography>
                           Genre: {book.genre} <br />
                           Summary: {book.summary} <br />
+                          <Button variant="contained" color="primary">
+                            Borrow Book
+                          </Button>
                         </Typography>
                       </AccordionDetails>
                     </Accordion>
