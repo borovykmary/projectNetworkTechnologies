@@ -24,10 +24,11 @@ public class BookDetailService {
         this.bookRepository = bookRepository;
     }
 
-    public GetBookDetailsDto getOne(long id){
-        var bookDetailsEntity = bookDetailRepository.findById(id).orElseThrow(() -> NotFoundException.create("Book Detail", id));
+    public GetBookDetailsDto getOne(int id){
+        var bookDetailsEntity = bookDetailRepository.findByBookId(id).orElseThrow(() -> NotFoundException.create("Book Detail", id));
         return new GetBookDetailsDto(
                 bookDetailsEntity.getId(),
+                bookDetailsEntity.getBook().getId(),
                 bookDetailsEntity.getGenre(),
                 bookDetailsEntity.getSummary(),
                 bookDetailsEntity.getCoverImageUrl()
@@ -38,6 +39,7 @@ public class BookDetailService {
         var bookDetails = bookDetailRepository.findAll();
         return bookDetails.stream().map((bookDetail) -> new GetBookDetailsDto(
                 bookDetail.getId(),
+                bookDetail.getBook().getId(),
                 bookDetail.getGenre(),
                 bookDetail.getSummary(),
                 bookDetail.getCoverImageUrl()
@@ -50,17 +52,17 @@ public class BookDetailService {
         bookDetail.setSummary(bookDetailDto.getSummary());
         bookDetail.setCoverImageUrl(bookDetailDto.getCoverImageUrl());
 
-        BookEntity book = bookRepository.findByIsbn(bookDetailDto.getIsbn()).orElseThrow(()
-                -> new RuntimeException("Book with isbn " + bookDetailDto.getIsbn() + " not found"));
+        BookEntity book = bookRepository.findById(bookDetailDto.getBookId()).orElseThrow(()
+                -> new RuntimeException("Book with id " + bookDetailDto.getBookId() + " not found"));
         bookDetail.setBook(book);
 
         var newBookDetail = bookDetailRepository.save(bookDetail);
 
         return new CreateResponseBookDetailsDto(
+                newBookDetail.getBook().getId(),
                 newBookDetail.getGenre(),
                 newBookDetail.getSummary(),
-                newBookDetail.getCoverImageUrl(),
-                book.getIsbn()
+                newBookDetail.getCoverImageUrl()
         );
     }
 

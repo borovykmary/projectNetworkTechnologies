@@ -7,18 +7,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 public class CreateResponseBookDetailsDto {
+    private int bookId;
     private String genre;
     private String summary;
     private String coverImageUrl;
-    private String isbn;
 
-    public CreateResponseBookDetailsDto( String genre, String summary, String coverImageUrl, String isbn) {
+    public CreateResponseBookDetailsDto(int bookId, String genre, String summary, String coverImageUrl) {
+        this.bookId = bookId;
         this.genre = genre;
         this.summary = summary;
         this.coverImageUrl = coverImageUrl;
-        this.isbn = isbn;
     }
-
 
     public String getGenre() {
         return genre;
@@ -44,11 +43,11 @@ public class CreateResponseBookDetailsDto {
         this.coverImageUrl = coverImageUrl;
     }
 
-    public String getIsbn() {
-        return isbn;
+    public int getBookId() {
+        return bookId;
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
     }
 }

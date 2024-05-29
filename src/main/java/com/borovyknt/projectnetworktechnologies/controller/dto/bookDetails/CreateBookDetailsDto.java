@@ -1,16 +1,24 @@
 package com.borovyknt.projectnetworktechnologies.controller.dto.bookDetails;
 
 public class CreateBookDetailsDto {
+    private int bookId;
     private String genre;
     private String summary;
     private String coverImageUrl;
-    private String isbn;
 
-    public CreateBookDetailsDto(String genre, String summary, String coverImageUrl, String isbn) {
+    public CreateBookDetailsDto(int bookId, String genre, String summary, String coverImageUrl) {
+        this.bookId = bookId;
         this.genre = genre;
         this.summary = summary;
         this.coverImageUrl = coverImageUrl;
-        this.isbn = isbn;
+    }
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
     }
 
     public String getGenre() {
@@ -37,11 +45,5 @@ public class CreateBookDetailsDto {
         this.coverImageUrl = coverImageUrl;
     }
 
-    public String getIsbn() {
-        return isbn;
-    }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
 }

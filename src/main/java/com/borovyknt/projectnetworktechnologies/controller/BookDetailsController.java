@@ -30,8 +30,8 @@ public class BookDetailsController {
 
     @GetMapping("/{id}")
     public GetBookDetailsDto getOne(@PathVariable String id){
-        var idLong = Long.parseLong(id.substring(1, id.length() - 1));
-        return bookDetailService.getOne(idLong);
+        var idInt = Integer.parseInt(id);
+        return bookDetailService.getOne(idInt);
     }
 
     @PostMapping

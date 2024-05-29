@@ -1,6 +1,8 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { LoginResponseDto } from "./login-response.dto";
 import { LoginRequestDto } from "./login-request.dto";
+import { Book } from "./Book";
+import { BookDetails } from "./BookDetails";
 
 type ClientResponse = {
   success: boolean;
@@ -36,6 +38,60 @@ export class LibraryClient {
     } catch (error) {
       const axiosError = error as AxiosError<Error>;
 
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
+  public async getBooks(): Promise<ClientResponse> {
+    try {
+      const response: AxiosResponse<Book[]> = await this.client.get("/books");
+
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
+  public async getBookDetails(bookId: number): Promise<ClientResponse> {
+    try {
+      const response: AxiosResponse<BookDetails> = await this.client.get(
+        `/book-details/${bookId}`,
+      );
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      if (axiosError.response?.status === 404) {
+        // Return default values if details are not found
+        const defaultDetails: BookDetails = {
+          id: -1,
+          bookId: bookId,
+          genre: "No data",
+          summary: "No data",
+          coverImageUrl:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT0xwyLstvC7wH8jYIKur3GTcSq-g6fj2EbL4wk-qaONHYjBswa3rpFsZJeEjuXcG-lw&usqp=CAU",
+        };
+        return {
+          success: true,
+          data: defaultDetails,
+          status: 200,
+        };
+      }
       return {
         success: false,
         data: axiosError.response?.data,

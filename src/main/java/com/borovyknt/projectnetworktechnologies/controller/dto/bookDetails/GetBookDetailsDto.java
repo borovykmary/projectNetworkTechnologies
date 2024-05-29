@@ -2,15 +2,25 @@ package com.borovyknt.projectnetworktechnologies.controller.dto.bookDetails;
 
 public class GetBookDetailsDto {
     private int id;
+    private int bookId;
     private String genre;
     private String summary;
     private String coverImageUrl;
 
-    public GetBookDetailsDto(int id, String genre, String summary, String coverImageUrl) {
+    public GetBookDetailsDto(int id, int bookId, String genre, String summary, String coverImageUrl) {
         this.id = id;
+        this.bookId = bookId;
         this.genre = genre;
         this.summary = summary;
         this.coverImageUrl = coverImageUrl;
+    }
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
     }
 
     public int getId() {
