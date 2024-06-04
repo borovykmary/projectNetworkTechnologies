@@ -16,53 +16,56 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useNavigate } from "react-router-dom";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
-/>;
-
-const loans = [
-  {
-    loanId: 1,
-    coverImageUrl:
-      "https://media.harrypotterfanzone.com/sorcerers-stone-us-childrens-edition.jpg",
-    status: "Borrowed",
-    dueDate: "2022-01-31",
-    loanDate: "2022-01-01",
-    returnDate: "2022-01-31",
-    bookDetails: { title: "Philosopher's Stone", author: "J.K. Rowling" },
-  },
-  {
-    loanId: 2,
-    coverImageUrl:
-      "https://media.harrypotterfanzone.com/chamber-of-secrets-uk-childrens-edition-2014.jpg",
-    status: "Borrowed",
-    loanDate: "2022-02-01",
-    dueDate: "2022-02-28",
-    returnDate: "2022-02-28",
-    bookDetails: { title: "Chamber of Secrets", author: "J.K. Rowling" },
-  },
-  {
-    loanId: 3,
-    coverImageUrl: "https://images.penguinrandomhouse.com/cover/9780439139601",
-    status: "Borrowed",
-    dueDate: "2022-03-31",
-    loanDate: "2022-03-01",
-    returnDate: " ",
-    bookDetails: { title: "Prisoner of Azkaban", author: "J.K. Rowling" },
-  },
-  {
-    loanId: 4,
-    coverImageUrl: "https://images.penguinrandomhouse.com/cover/9780439139595",
-    status: "Borrowed",
-    dueDate: "2022-04-30",
-    loanDate: "2022-04-01",
-    returnDate: " ",
-    bookDetails: { title: "Goblet of Fire", author: "J.K. Rowling" },
-  },
-];
+import { useEffect, useState } from "react";
+import { Loans } from "../api/Loans";
+import { useApi } from "../api/ApiProvide";
+import { Book } from "../api/Book";
+import { BookDetails } from "../api/BookDetails";
 
 const LoansPage: React.FC = () => {
+  const [loans, setLoans] = useState<Loans[]>([]);
+  const apiClient = useApi();
+
+  useEffect(() => {
+    const fetchLoans = async () => {
+      const loansResponse = await apiClient.getAllLoans();
+      if (loansResponse.success) {
+        const fetchedLoans: Loans[] = loansResponse.data;
+        const promises = fetchedLoans.map(async (loan: Loans) => {
+          console.log("Fetching details for loan:", loan.bookId);
+          const bookResponse = await apiClient.getBook(loan.bookId);
+          console.log("Book response:", bookResponse);
+          const detailsResponse = await apiClient.getBookDetails(loan.bookId);
+          console.log("Details response:", detailsResponse);
+
+          if (bookResponse.success) {
+            return {
+              ...loan,
+              book: { ...bookResponse.data, ...detailsResponse.data },
+            };
+          } else {
+            console.error(
+              "Failed to fetch details for loan:",
+              loan.loanId,
+              bookResponse.data,
+              detailsResponse.data,
+            );
+            return {
+              ...loan,
+              title: "No data",
+              author: "No data",
+              coverImageUrl:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT0xwyLstvC7wH8jYIKur3GTcSq-g6fj2EbL4wk-qaONHYjBswa3rpFsZJeEjuXcG-lw&usqp=CAU",
+            };
+          }
+        });
+        const loansWithDetails = await Promise.all(promises);
+        setLoans(loansWithDetails);
+      }
+    };
+
+    fetchLoans();
+  }, [apiClient]);
   const handleReturn = (id: number) => {
     console.log(`Return book with id ${id}`);
   };
@@ -121,9 +124,9 @@ const LoansPage: React.FC = () => {
             alt="Book cover"
           />
           <CardContent className="loan-info">
-            <Typography variant="h5">{loan.bookDetails["title"]}</Typography>
+            <Typography variant="h5">{loan.title}</Typography>
             <Typography variant="subtitle1" color="text.secondary">
-              {loan.bookDetails["author"]}
+              {loan.author}
             </Typography>
             <Typography variant="subtitle1" color="text.secondary">
               Status: {loan.status}

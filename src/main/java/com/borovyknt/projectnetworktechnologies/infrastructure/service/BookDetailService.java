@@ -47,13 +47,17 @@ public class BookDetailService {
     }
 
     public CreateResponseBookDetailsDto create(CreateBookDetailsDto bookDetailDto){
+        BookEntity book = bookRepository.findById(bookDetailDto.getBookId()).orElseThrow(()
+                -> new RuntimeException("Book with id " + bookDetailDto.getBookId() + " not found"));
+
+        if (bookDetailRepository.findByBookId(bookDetailDto.getBookId()).isPresent()) {
+            throw new RuntimeException("Book detail for book with id " + bookDetailDto.getBookId() + " already exists");
+        }
+
         BookDetailEntity bookDetail = new BookDetailEntity();
         bookDetail.setGenre(bookDetailDto.getGenre());
         bookDetail.setSummary(bookDetailDto.getSummary());
         bookDetail.setCoverImageUrl(bookDetailDto.getCoverImageUrl());
-
-        BookEntity book = bookRepository.findById(bookDetailDto.getBookId()).orElseThrow(()
-                -> new RuntimeException("Book with id " + bookDetailDto.getBookId() + " not found"));
         bookDetail.setBook(book);
 
         var newBookDetail = bookDetailRepository.save(bookDetail);

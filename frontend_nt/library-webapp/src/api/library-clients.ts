@@ -3,6 +3,8 @@ import { LoginResponseDto } from "./login-response.dto";
 import { LoginRequestDto } from "./login-request.dto";
 import { Book } from "./Book";
 import { BookDetails } from "./BookDetails";
+import { useCookies } from "react-cookie";
+import { Loans } from "./Loans";
 
 type ClientResponse = {
   success: boolean;
@@ -29,10 +31,15 @@ export class LibraryClient {
 
       this.client.defaults.headers.common["Authorization"] =
         `Bearer ${response.data.token}`;
+      const token = response.data.token;
+      if (typeof token === "string") {
+        localStorage.removeItem("token");
+        localStorage.setItem("token", token);
+      }
 
       return {
         success: true,
-        data: undefined,
+        data: response.data,
         status: response.status,
       };
     } catch (error) {
@@ -57,6 +64,25 @@ export class LibraryClient {
     } catch (error) {
       const axiosError = error as AxiosError<Error>;
 
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
+  public async getBook(bookId: number): Promise<ClientResponse> {
+    try {
+      const response: AxiosResponse<Book> = await this.client.get(
+        `/books/${bookId}`,
+      );
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
       return {
         success: false,
         data: axiosError.response?.data,
@@ -96,6 +122,35 @@ export class LibraryClient {
         success: false,
         data: axiosError.response?.data,
         status: axiosError.response?.status || 500,
+      };
+    }
+  }
+  public async getAllLoans(): Promise<ClientResponse> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response: AxiosResponse<Loans[]> = await this.client.get(
+        "/loans/history",
+        axiosConfig,
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 0,
       };
     }
   }

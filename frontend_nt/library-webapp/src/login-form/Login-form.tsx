@@ -5,9 +5,8 @@ import { Formik } from "formik";
 import { useCallback, useMemo } from "react";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
-import bookIcon from "/Users/marynaborovyk/Desktop/semestr-4/Network_Technologies/Project/projectNetworkTechnologies/frontend_nt/library-webapp/src/res/bookicon.svg";
-import axios from "axios";
 import { useApi } from "../api/ApiProvide";
+import {useCookies} from "react-cookie";
 
 type FormValues = {
   username: string;
@@ -15,25 +14,27 @@ type FormValues = {
 };
 
 function LoginForm() {
+  // const [cookies, setCookie] = useCookies(['token']);
   const initialValues = { username: "", password: "" };
   const navigate = useNavigate();
   const apiClient = useApi();
 
   const submit = useCallback(
-    (values: FormValues, formik: any) => {
-      formik.resetForm();
+  (values: FormValues, formik: any) => {
+    formik.resetForm();
 
-      apiClient.login(values).then((response) => {
-        console.log(response);
-        if (!response.success) {
-          console.log("Login failed");
-          return;
-        }
-      });
-      navigate("/home");
-    },
-    [navigate],
-  );
+    apiClient.login(values).then((response) => {
+      console.log(response);
+      if (!response.success) {
+        console.log("Login failed");
+        return;
+      }
+        // setCookie("token", response.data.token, { path: "/"});
+    });
+    navigate("/home");
+  },
+  [navigate],
+);
 
   const validationSchema = useMemo(
     () =>

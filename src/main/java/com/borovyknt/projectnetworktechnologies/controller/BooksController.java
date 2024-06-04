@@ -29,8 +29,8 @@ public class BooksController {
 
     @GetMapping("/{id}")
     public GetBookDto getOne(@PathVariable String id){
-        var idLong = Long.parseLong(id.substring(1, id.length() - 1));
-        return bookService.getOne(idLong);
+        var idInt = Integer.parseInt(id);
+        return bookService.getOne(idInt);
     }
 
     @PostMapping

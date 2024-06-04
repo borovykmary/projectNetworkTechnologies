@@ -22,6 +22,7 @@ public class CreateLoanResponseDto {
     public CreateLoanResponseDto() {
     }
 
+
     public int getLoanId() {
         return loanId;
     }

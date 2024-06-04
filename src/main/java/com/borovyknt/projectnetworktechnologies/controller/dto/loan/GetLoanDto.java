@@ -10,16 +10,26 @@ public class GetLoanDto {
     private Date dueDate;
     private Date returnDate;
     private LoanStatus status;
+    private int bookId;
 
-    public GetLoanDto(int loanId, Date loanDate, Date dueDate, Date returnDate, LoanStatus status) {
+    public GetLoanDto(int loanId, Date loanDate, Date dueDate, Date returnDate, LoanStatus status, int bookId) {
         this.loanId = loanId;
         this.loanDate = loanDate;
         this.dueDate = dueDate;
         this.returnDate = returnDate;
         this.status = status;
+        this.bookId = bookId;
     }
 
     public GetLoanDto() {
+    }
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
     }
 
     public int getLoanId() {

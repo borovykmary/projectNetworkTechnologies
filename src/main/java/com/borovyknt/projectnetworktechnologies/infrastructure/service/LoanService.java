@@ -36,7 +36,8 @@ public class LoanService {
                 loanEntity.getLoanDate(),
                 loanEntity.getReturnDate(),
                 loanEntity.getDueDate(),
-                loanEntity.getStatus()
+                loanEntity.getStatus(),
+                loanEntity.getBook().getId()
         );
     }
 
@@ -47,7 +48,8 @@ public class LoanService {
                 loan.getLoanDate(),
                 loan.getReturnDate(),
                 loan.getDueDate(),
-                loan.getStatus()
+                loan.getStatus(),
+                loan.getBook().getId()
         )).toList();
     }
 
@@ -58,7 +60,8 @@ public class LoanService {
                 loan.getLoanDate(),
                 loan.getReturnDate(),
                 loan.getDueDate(),
-                loan.getStatus()
+                loan.getStatus(),
+                loan.getBook().getId()
         )).toList();
     }
     @Transactional
