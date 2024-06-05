@@ -3,8 +3,10 @@ import { LoginResponseDto } from "./login-response.dto";
 import { LoginRequestDto } from "./login-request.dto";
 import { Book } from "./Book";
 import { BookDetails } from "./BookDetails";
-import { useCookies } from "react-cookie";
 import { Loans } from "./Loans";
+import { RegisterUserRequestDto } from "./register-user-request.dto";
+import { AddBookDetailsRequestDto } from "./add-bookdetails-request.dto";
+import { CreateBookRequestDto } from "./add-book-request.dto";
 
 type ClientResponse = {
   success: boolean;
@@ -125,7 +127,7 @@ export class LibraryClient {
       };
     }
   }
-  public async getAllLoans(): Promise<ClientResponse> {
+  public async getAllLoansUser(): Promise<ClientResponse> {
     try {
       const token = localStorage.getItem("token");
       const axiosConfig = {
@@ -151,6 +153,132 @@ export class LibraryClient {
         success: false,
         data: axiosError.response?.data,
         status: axiosError.response?.status || 0,
+      };
+    }
+  }
+  public async registerUser(data: RegisterUserRequestDto): Promise<number> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+      const response: AxiosResponse<LoginResponseDto> = await this.client.post(
+        "/auth/register",
+        data,
+        axiosConfig,
+      );
+
+      this.client.defaults.headers.common["Authorization"] =
+        `Bearer ${response.data.token} `;
+      return response.status;
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return axiosError.response?.status || 0;
+    }
+  }
+  public async addBook(data: CreateBookRequestDto): Promise<number> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+      console.log(axiosConfig.headers.Authorization);
+      const response: AxiosResponse<LoginResponseDto> = await this.client.post(
+        "/books/create",
+        data,
+        axiosConfig,
+      );
+
+      this.client.defaults.headers.common["Authorization"] =
+        `Bearer ${response.data.token}`;
+      return response.status;
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return axiosError.response?.status || 0;
+    }
+  }
+
+  public async addBookDetails(data: AddBookDetailsRequestDto): Promise<number> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+      console.log(axiosConfig.headers.Authorization);
+      const response: AxiosResponse<LoginResponseDto> = await this.client.post(
+        "/book-details/create",
+        data,
+        axiosConfig,
+      );
+
+      this.client.defaults.headers.common["Authorization"] =
+        `Bearer ${response.data.token}`;
+      return response.status;
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return axiosError.response?.status || 0;
+    }
+  }
+
+  public async deleteUser(id: number): Promise<ClientResponse> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response: AxiosResponse = await this.client.delete(
+        `/users/${id}`,
+        axiosConfig,
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
+  public async deleteBook(id: number): Promise<ClientResponse> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response: AxiosResponse = await this.client.delete(
+        `/books/${id}`,
+        axiosConfig,
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
       };
     }
   }

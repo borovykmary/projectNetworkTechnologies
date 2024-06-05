@@ -280,6 +280,14 @@ const HomePage: React.FC = () => {
           </Button>
           <Button
             color="inherit"
+            onClick={() => {
+              navigate("/admin");
+            }}
+          >
+            Admin Console
+          </Button>
+          <Button
+            color="inherit"
             endIcon={<LogoutRoundedIcon />}
             onClick={() => {
               navigate("/login");

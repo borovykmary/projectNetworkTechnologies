@@ -12,6 +12,9 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "./ManageBooks.css";
+import { useApi } from "../api/ApiProvide";
+import { CreateBookRequestDto } from "../api/add-book-request.dto";
+import { AddBookDetailsRequestDto } from "../api/add-bookdetails-request.dto";
 
 interface BookFormValues {
   isbn: string;
@@ -20,33 +23,104 @@ interface BookFormValues {
   publisher: string;
   yearPublished: number;
   availableCopies: number;
-  genre?: string;
-  summary?: string;
-  coverImageUrl?: string;
+}
+interface BookDetailsFormValues {
+  bookId: number;
+  genre: string;
+  summary: string;
+  coverImageUrl: string;
+}
+interface DeleteBookProps {
+  deleteBook: (bookId: number) => void;
+}
+
+function DeleteBook({ deleteBook }: DeleteBookProps) {
+  return (
+    <Formik
+      initialValues={{ deleteBook: 0 }}
+      onSubmit={(values, { setSubmitting }) => {
+        if (window.confirm("Are you sure you want to delete this book?")) {
+          deleteBook(values.deleteBook);
+        }
+        setSubmitting(false);
+      }}
+    >
+      <Form>
+        <Field name="bookId" type="text" placeholder="Book ID" />
+        <ErrorMessage name="bookId" component="div" />
+        <button type="submit">Delete Book</button>
+      </Form>
+    </Formik>
+  );
 }
 
 const ManageBooks: React.FC = () => {
   const [books, setBooks] = useState<BookFormValues[]>([]);
+  const [bookDetails, setBookDetails] = useState<BookDetailsFormValues[]>([]);
+  const [message, setMessage] = useState<string | null>(null);
+  const apiClient = useApi();
 
-  const addBook = (values: BookFormValues) => {
-    setBooks([...books, values]);
+  const addBook = async (values: BookFormValues) => {
+    const data: CreateBookRequestDto = {
+      isbn: values.isbn,
+      title: values.title,
+      author: values.author,
+      publisher: values.publisher,
+      yearPublished: values.yearPublished,
+      availableCopies: values.availableCopies,
+    };
+    try {
+      const response = await apiClient.addBook(data);
+
+      if (response === 201) {
+        setBooks([...books, values]);
+        setMessage("Book is successfully created");
+      } else {
+        console.error(`Book creation failed with status code ${response}`);
+        setMessage("Book creation failed");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const updateBook = (isbn: string, updates: Partial<BookFormValues>) => {
-    setBooks(
-      books.map((book) =>
-        book.isbn === isbn ? { ...book, ...updates } : book,
-      ),
-    );
+  const addBookDetails = async (values: BookDetailsFormValues) => {
+    const data: AddBookDetailsRequestDto = {
+      bookId: values.bookId,
+      genre: values.genre,
+      summary: values.summary,
+      coverImageURL: values.coverImageUrl,
+    };
+    try {
+      const response = await apiClient.addBookDetails(data);
+
+      if (response === 201) {
+        setBookDetails([...bookDetails, values]);
+        setMessage("Book Details is successfully updated");
+      } else {
+        console.error(
+          `Book details creation failed with status code ${response}`,
+        );
+        setMessage("Book details creation failed");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const deleteBook = (isbn: string) => {
-    setBooks(books.filter((book) => book.isbn !== isbn));
+  const handleDeleteBook = async (bookId: number) => {
+    const response = await apiClient.deleteBook(bookId);
+    if (response.success) {
+      setMessage("Book is successfully deleted");
+    } else {
+      setMessage("Book deletion failed");
+    }
   };
 
   return (
     <div className="manage-books">
       <h2>Add Book</h2>
+      {message && <p>{message}</p>}
       <Formik
         initialValues={{
           isbn: "",
@@ -143,31 +217,31 @@ const ManageBooks: React.FC = () => {
       </Formik>
 
       <h2>Update Book Details</h2>
+      {message && <p>{message}</p>}
       <Formik
         initialValues={{
-          isbn: "",
+          bookId: 0,
           genre: "",
           summary: "",
           coverImageUrl: "",
         }}
         validationSchema={Yup.object({
-          isbn: Yup.string().required("Required"),
+          bookId: Yup.number().required("Required"),
           genre: Yup.string(),
           summary: Yup.string(),
           coverImageUrl: Yup.string().url("Invalid URL"),
         })}
         onSubmit={(values, { resetForm }) => {
-          const { isbn, ...updates } = values;
-          updateBook(isbn, updates);
+          addBookDetails(values);
           resetForm();
         }}
       >
         <Form className="form-section">
           <div className="form-group">
-            <label htmlFor="isbn">ISBN</label>
-            <Field name="isbn" type="text" placeholder="ISBN" />
+            <label htmlFor="bookId">Book ID</label>
+            <Field name="bookId" type="text" placeholder="Book ID" />
             <ErrorMessage
-              name="isbn"
+              name="bookId"
               component="div"
               className="error-message"
             />
@@ -210,33 +284,8 @@ const ManageBooks: React.FC = () => {
       </Formik>
 
       <h2>Delete Book</h2>
-      <Formik
-        initialValues={{ isbn: "" }}
-        validationSchema={Yup.object({
-          isbn: Yup.string().required("Required"),
-        })}
-        onSubmit={(values, { resetForm }) => {
-          if (window.confirm("Are you sure you want to delete this book?")) {
-            deleteBook(values.isbn);
-          }
-          resetForm();
-        }}
-      >
-        <Form className="form-section">
-          <div className="form-group">
-            <label htmlFor="isbn">ISBN</label>
-            <Field name="isbn" type="text" placeholder="ISBN" />
-            <ErrorMessage
-              name="isbn"
-              component="div"
-              className="error-message"
-            />
-          </div>
-          <div className="button-group">
-            <button type="submit">Delete Book</button>
-          </div>
-        </Form>
-      </Formik>
+      {message && <p>{message}</p>}
+      <DeleteBook deleteBook={handleDeleteBook} />
     </div>
   );
 };

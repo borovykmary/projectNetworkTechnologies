@@ -1,4 +1,3 @@
-
 export interface Book {
   id: number;
   isbn: string;
@@ -6,9 +5,8 @@ export interface Book {
   author: string;
   publisher: string;
   yearPublished: number;
-  isAvailable: boolean;
-  genre?: string,
-  summary?: string,
-  coverImageUrl?: string,
-
+  availableCopies: number;
+  genre?: string;
+  summary?: string;
+  coverImageUrl?: string;
 }

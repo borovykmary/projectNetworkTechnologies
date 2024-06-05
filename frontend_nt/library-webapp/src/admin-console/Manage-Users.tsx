@@ -2,22 +2,24 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "./ManageUsers.css";
+import { useApi } from "../api/ApiProvide";
+import { RegisterUserRequestDto } from "../api/register-user-request.dto";
 
 interface UserFormValues {
-  userId: string;
+  userId: number;
   username: string;
   password: string;
   role: string;
   email: string;
 }
 interface DeleteUserProps {
-  deleteUser: (userId: string) => void;
+  deleteUser: (userId: number) => void;
 }
 
 function DeleteUser({ deleteUser }: DeleteUserProps) {
   return (
     <Formik
-      initialValues={{ userId: "" }}
+      initialValues={{ userId: 0 }}
       onSubmit={(values, { setSubmitting }) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
           deleteUser(values.userId);
@@ -36,21 +38,47 @@ function DeleteUser({ deleteUser }: DeleteUserProps) {
 
 const ManageUsers: React.FC = () => {
   const [users, setUsers] = useState<UserFormValues[]>([]);
+  const [message, setMessage] = useState<string | null>(null);
+  const apiClient = useApi();
 
-  const addUser = (values: UserFormValues) => {
-    setUsers([...users, values]);
+  const addUser = async (values: UserFormValues) => {
+    const data: RegisterUserRequestDto = {
+      username: values.username,
+      password: values.password,
+      role: values.role,
+      email: values.email,
+    };
+    try {
+      const response = await apiClient.registerUser(data);
+
+      if (response === 201) {
+        setUsers([...users, values]);
+        setMessage("User is successfully created");
+      } else {
+        console.error(`User registration failed with status code ${response}`);
+        setMessage("User registration failed");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const deleteUser = (userId: string) => {
-    setUsers(users.filter((user) => user.userId !== userId));
+  const handleDeleteUser = async (userId: number) => {
+    const response = await apiClient.deleteUser(userId);
+    if (response.success) {
+      setMessage("User is successfully deleted");
+    } else {
+      setMessage("User deletion failed");
+    }
   };
 
   return (
     <div className="manage-users">
       <h2>Add User</h2>
+      {message && <p>{message}</p>}
       <Formik
         initialValues={{
-          userId: "",
+          userId: 0,
           username: "",
           password: "",
           role: "",
@@ -74,7 +102,11 @@ const ManageUsers: React.FC = () => {
           <ErrorMessage name="username" component="div" />
           <Field name="password" type="password" placeholder="Password" />
           <ErrorMessage name="password" component="div" />
-          <Field name="role" type="text" placeholder="Role" />
+          <Field as="select" name="role">
+            <option value="">Select a role</option>
+            <option value="ROLE_ADMIN">ROLE_ADMIN</option>
+            <option value="ROLE_READER">ROLE_READER</option>
+          </Field>
           <ErrorMessage name="role" component="div" />
           <Field name="email" type="email" placeholder="Email" />
           <ErrorMessage name="email" component="div" />
@@ -83,14 +115,8 @@ const ManageUsers: React.FC = () => {
       </Formik>
 
       <h2>Delete User</h2>
-      <DeleteUser deleteUser={deleteUser} />
-      <ul>
-        {users.map((user) => (
-          <li key={user.userId}>
-            {user.username} (ID: {user.userId})
-          </li>
-        ))}
-      </ul>
+      {message && <p>{message}</p>}
+      <DeleteUser deleteUser={handleDeleteUser} />
     </div>
   );
 };

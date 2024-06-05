@@ -5,6 +5,7 @@ import ManageUsers from "./Manage-Users";
 import ManageBooks from "./Manage-Books";
 import ManageLoans from "./Manage-Loans";
 import "./AdminConsole.css";
+import HomePage from "../home-page/Home-page";
 
 const AdminConsole: React.FC = () => {
   return (
@@ -23,6 +24,9 @@ const AdminConsole: React.FC = () => {
           <Button color="inherit" component={Link} to="/admin/loans">
             Manage Loans
           </Button>
+          <Button color="inherit" component={Link} to="/home">
+            Home Page
+          </Button>
         </Toolbar>
       </AppBar>
 
@@ -31,6 +35,7 @@ const AdminConsole: React.FC = () => {
           <Route path="users" element={<ManageUsers />} />
           <Route path="books" element={<ManageBooks />} />
           <Route path="loans" element={<ManageLoans />} />
+          <Route path="home" element={<HomePage />} />
         </Routes>
       </div>
     </div>

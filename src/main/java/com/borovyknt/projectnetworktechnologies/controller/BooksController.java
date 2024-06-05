@@ -33,7 +33,7 @@ public class BooksController {
         return bookService.getOne(idInt);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CreateBookResponseDto> create(@RequestBody CreateBookDto book){
         var newBook = bookService.create(book);
@@ -42,8 +42,8 @@ public class BooksController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable String id){
-        var idLong = Long.parseLong(id.substring(1, id.length() - 1));
-        bookService.delete(idLong);
+        var idInt = Integer.parseInt(id);
+        bookService.delete(idInt);
         return ResponseEntity.noContent().build();
     }
 }

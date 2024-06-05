@@ -36,8 +36,8 @@ public class UsersController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable String id){
-        var idLong = Long.parseLong(id.substring(1, id.length() - 1));
-        userService.delete(idLong);
+        var idInt = Integer.parseInt(id);
+        userService.delete(idInt);
         return ResponseEntity.noContent().build();
     }
 }

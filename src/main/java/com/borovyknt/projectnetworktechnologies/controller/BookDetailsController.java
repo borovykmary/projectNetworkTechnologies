@@ -34,7 +34,7 @@ public class BookDetailsController {
         return bookDetailService.getOne(idInt);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CreateResponseBookDetailsDto> create(@RequestBody CreateBookDetailsDto bookDetailDto){
         var newBookDetail = bookDetailService.create(bookDetailDto);

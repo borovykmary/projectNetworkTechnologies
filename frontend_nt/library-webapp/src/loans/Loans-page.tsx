@@ -28,7 +28,7 @@ const LoansPage: React.FC = () => {
 
   useEffect(() => {
     const fetchLoans = async () => {
-      const loansResponse = await apiClient.getAllLoans();
+      const loansResponse = await apiClient.getAllLoansUser();
       if (loansResponse.success) {
         const fetchedLoans: Loans[] = loansResponse.data;
         const promises = fetchedLoans.map(async (loan: Loans) => {
@@ -99,6 +99,14 @@ const LoansPage: React.FC = () => {
             }}
           >
             Your Books
+          </Button>
+          <Button
+            color="inherit"
+            onClick={() => {
+              navigate("/admin");
+            }}
+          >
+            Admin Console
           </Button>
           <Button
             color="inherit"
