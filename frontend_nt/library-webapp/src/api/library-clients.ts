@@ -282,4 +282,48 @@ export class LibraryClient {
       };
     }
   }
+  public async borrowBook(bookId: number): Promise<ClientResponse> {
+  try {
+    const token = localStorage.getItem("token");
+    const axiosConfig = {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    };
+
+    // Get today's date and format it as YYYY-MM-DD
+    const today = new Date();
+    const loanDate = today.toISOString().split('T')[0];
+
+    // Calculate due date (one month from today) and format it as YYYY-MM-DD
+    const dueDate = new Date();
+    dueDate.setMonth(dueDate.getMonth() + 1);
+    const dueDateString = dueDate.toISOString().split('T')[0];
+
+    const loanDetails = {
+      loanDate: loanDate,
+      returnDate: "",
+      dueDate: dueDateString
+    };
+
+    const response: AxiosResponse = await this.client.post(
+      `/loans/${bookId}/borrow`,
+      loanDetails,
+      axiosConfig,
+    );
+
+    return {
+      success: true,
+      data: response.data,
+      status: response.status,
+    };
+  } catch (error) {
+    const axiosError = error as AxiosError<Error>;
+    return {
+      success: false,
+      data: axiosError.response?.data,
+      status: axiosError.response?.status || 500,
+    };
+  }
+}
 }

@@ -41,6 +41,46 @@
 .book-author {
   color: #757575;
 }
+.book-isbn {
+  font-size: 14px;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.book-publisher {
+  font-size: 14px;
+  color: #000000;
+  margin-bottom: 10px;
+}
+
+.book-genre {
+  font-size: 14px;
+  color: #000000;
+  margin-bottom: 10px;
+}
+
+.book-copies {
+  font-size: 14px;
+  color: #000000;
+  margin-bottom: 10px;
+}
+
+.book-summary {
+  font-size: 14px;
+  color: #000000;
+  margin-bottom: 10px;
+}
+
+.book-title-modal {
+  font-weight: bold;
+  margin-bottom: 20px;
+  margin-top: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .Accordion {
   width: 100%;
   margin-top: auto;
@@ -55,4 +95,57 @@
 .book-cover {
   max-width: 100%;
   max-height: 300px;
+}
+.book-cover-modal {
+  max-height: 400px;
+  max-width: 70%;
+  height: auto;
+  display: block;
+  margin: 20px;
+}
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 40px; /* Increase padding */
+  border: 1px solid black;
+  border-radius: 10px; /* Add rounded borders */
+  width: 80%; /* Set width */
+  max-width: 800px; /* Set max width */
+  height: fit-content;
+  z-index: 1000;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+.button-borrow {
+  max-width: 100%;
+  display: block;
+  background-color: #5777ef;
+  color: white;
+  padding: 12px 40px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+}
+.button-close {
+  margin-top: 20px;
+  display: block;
+  margin: auto;
+  background-color: #5777ef;
+  color: white;
+  padding: 12px 40px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
 }

@@ -61,7 +61,7 @@ public class LoansController {
     }
     @PostMapping("/{bookId}/borrow")
     public ResponseEntity<CreateLoanResponseDto> borrowBook(@RequestBody CreateLoanDto loan, HttpServletRequest request, @PathVariable String bookId){
-        var bookIdlong = Long.parseLong(bookId.substring(1, bookId.length() - 1));
+        var bookIdInt = Integer.parseInt(bookId);
 
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
@@ -72,7 +72,7 @@ public class LoansController {
         var userEntity = userRepository.findByuserId(userId)
                 .orElseThrow(() -> NotFoundException.create("User", userId));
 
-        var newLoan = loanService.borrowBook(loan, bookIdlong, userEntity);
+        var newLoan = loanService.borrowBook(loan, bookIdInt, userEntity);
         return new ResponseEntity<>(newLoan, HttpStatus.CREATED);
     }
 

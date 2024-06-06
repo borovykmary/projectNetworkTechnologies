@@ -24,6 +24,7 @@ import { Book } from "../api/Book";
 import { BookDetails } from "../api/BookDetails";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import AppBarUser from "../components/AppBarUser";
 
 // const sortedBooks = books.sort((a, b) => b.rating - a.rating).slice(0, 4);
 
@@ -33,6 +34,84 @@ const HomePage: React.FC = () => {
     {},
   );
   const apiClient = useApi();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [borrowStatus, setBorrowStatus] = useState<string | null>(null);
+  const [isBorrowing, setIsBorrowing] = useState<boolean>(false);
+
+  const handleBorrowBook = async (bookId: number) => {
+    setIsBorrowing(true);
+    const response = await apiClient.borrowBook(bookId);
+    if (response.success) {
+      setBorrowStatus(response.data.status);
+      setIsBorrowing(true)
+    } else {
+      setBorrowStatus(response.data.status);
+    }
+    setIsBorrowing(false);
+  };
+  const handleOpenBook = (book: Book) => {
+    console.log("Open book clicked", book);
+    setSelectedBook(book);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedBook(null);
+    setShowModal(false);
+  };
+
+  const Modal = () => {
+    if (!showModal || !selectedBook) return null;
+
+    return (
+      <div className="modal">
+        <Grid container>
+          <Grid item xs={12} sm={6}>
+            <img
+                className="book-cover-modal"
+                src={selectedBook.coverImageUrl}
+                alt={selectedBook.title}
+                style={{ width: "100%", height: "auto" }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="h5" component="h2" className="book-title-modal">
+              {selectedBook.title}
+            </Typography>
+            <Typography className="book-isbn">
+              ISBN: {selectedBook.isbn}
+            </Typography>
+            <Typography className="book-isbn">
+              Year Published: {selectedBook.yearPublished}
+            </Typography>
+            <Typography className="book-author">
+              Author: {selectedBook.author}
+            </Typography>
+            <Typography className="book-publisher">
+              Publisher: {selectedBook.publisher}
+            </Typography>
+            <Typography className="book-genre">
+              Genre: {selectedBook.genre}
+            </Typography>
+            <Typography className="book-copies">
+              Available copies: {selectedBook.availableCopies}
+            </Typography>
+            <Typography className="book-summary">
+              Summary: {selectedBook.summary}
+            </Typography>
+            <button className="button-borrow"
+              onClick={() => handleBorrowBook(selectedBook.id)}
+              disabled={isBorrowing}
+              >
+              {borrowStatus || "Borrow Book"}
+            </button>
+            <button onClick={handleCloseModal} className="button-close">Close</button>
+          </Grid>
+        </Grid>
+      </div>
+    );
+  };
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -84,6 +163,9 @@ const HomePage: React.FC = () => {
 
     fetchBooks();
   }, [apiClient]);
+  useEffect(() => {
+  console.log("Modal state changed", showModal);
+}, [showModal]);
 
   const navigate = useNavigate();
 
@@ -253,50 +335,7 @@ const HomePage: React.FC = () => {
    */
   return (
     <div>
-      <AppBar position="static" className="AppBar">
-        <Toolbar className="ToolBar">
-          <Typography
-            variant="h6"
-            component="div"
-            style={{ marginRight: "20px" }}
-          >
-            <MenuBookRoundedIcon /> {t("library")}
-          </Typography>
-          <Button
-            color="inherit"
-            onClick={() => {
-              navigate("/home");
-            }}
-          >
-            {t("books")}
-          </Button>
-          <Button
-            color="inherit"
-            onClick={() => {
-              navigate("/loans");
-            }}
-          >
-            Your Books
-          </Button>
-          <Button
-            color="inherit"
-            onClick={() => {
-              navigate("/admin");
-            }}
-          >
-            Admin Console
-          </Button>
-          <Button
-            color="inherit"
-            endIcon={<LogoutRoundedIcon />}
-            onClick={() => {
-              navigate("/login");
-            }}
-          >
-            Log Out
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <AppBarUser />
       {Object.keys(sortedBooks).map((genre, genreIndex) => (
         <div key={genreIndex}>
           <Typography variant="h4" component="h2" className="section-title">
@@ -328,6 +367,9 @@ const HomePage: React.FC = () => {
                       alt={book.title}
                       style={{ width: "100%", height: "auto" }}
                     />
+                    <button onClick={() => handleOpenBook(book)}>
+                      Open Book
+                    </button>
                   </CardContent>
                   <Accordion>
                     <AccordionSummary
@@ -351,6 +393,7 @@ const HomePage: React.FC = () => {
           </Grid>
         </div>
       ))}
+      <Modal />
     </div>
   );
 };
