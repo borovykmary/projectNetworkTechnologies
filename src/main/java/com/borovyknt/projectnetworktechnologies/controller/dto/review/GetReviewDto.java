@@ -5,15 +5,25 @@ import java.util.Date;
 
 public class GetReviewDto {
     private int reviewId;
+    private int bookId;
     private double rating;
     private String comment;
     private Date reviewDate;
 
-    public GetReviewDto(int reviewId, double rating, String comment, Date reviewDate) {
+    public GetReviewDto(int reviewId, int bookId, double rating, String comment, Date reviewDate) {
         this.reviewId = reviewId;
+        this.bookId = bookId;
         this.rating = rating;
         this.comment = comment;
         this.reviewDate = reviewDate;
+    }
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
     }
 
     public GetReviewDto() {

@@ -25,6 +25,7 @@ import { BookDetails } from "../api/BookDetails";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AppBarUser from "../components/AppBarUser";
+import {GetReviewDto} from "../api/get-review.dto";
 
 // const sortedBooks = books.sort((a, b) => b.rating - a.rating).slice(0, 4);
 
@@ -38,21 +39,28 @@ const HomePage: React.FC = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [borrowStatus, setBorrowStatus] = useState<string | null>(null);
   const [isBorrowing, setIsBorrowing] = useState<boolean>(false);
+  const [reviews, setReviews] = useState<GetReviewDto[]>([]);
 
   const handleBorrowBook = async (bookId: number) => {
     setIsBorrowing(true);
     const response = await apiClient.borrowBook(bookId);
     if (response.success) {
       setBorrowStatus(response.data.status);
-      setIsBorrowing(true)
+      setIsBorrowing(true);
     } else {
       setBorrowStatus(response.data.status);
     }
     setIsBorrowing(false);
   };
-  const handleOpenBook = (book: Book) => {
+  const handleOpenBook = async (book: Book) => {
     console.log("Open book clicked", book);
     setSelectedBook(book);
+    const response = await apiClient.getBookReviews(book.id);
+    if (response.success) {
+      setReviews(response.data);
+    } else {
+      console.error("Failed to fetch reviews:", response.data);
+    }
     setShowModal(true);
   };
 
@@ -64,19 +72,27 @@ const HomePage: React.FC = () => {
   const Modal = () => {
     if (!showModal || !selectedBook) return null;
 
+
+    const averageRating =
+        reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length || 0;
+
     return (
       <div className="modal">
         <Grid container>
           <Grid item xs={12} sm={6}>
             <img
-                className="book-cover-modal"
-                src={selectedBook.coverImageUrl}
-                alt={selectedBook.title}
-                style={{ width: "100%", height: "auto" }}
+              className="book-cover-modal"
+              src={selectedBook.coverImageUrl}
+              alt={selectedBook.title}
+              style={{ width: "100%", height: "auto" }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="h5" component="h2" className="book-title-modal">
+            <Typography
+              variant="h5"
+              component="h2"
+              className="book-title-modal"
+            >
               {selectedBook.title}
             </Typography>
             <Typography className="book-isbn">
@@ -100,13 +116,27 @@ const HomePage: React.FC = () => {
             <Typography className="book-summary">
               Summary: {selectedBook.summary}
             </Typography>
-            <button className="button-borrow"
+            <Rating name="read-only" value={averageRating} readOnly />
+            <Typography className="book-reviews">
+              Review Comments:
+              {reviews.length > 0 ? (
+                  reviews.map((review, index) => (
+                      <Typography key={index}>{review.comment}</Typography>
+                  ))
+              ) : (
+                  <Typography>No comments yet provided</Typography>
+              )}
+            </Typography>
+            <button
+              className="button-borrow"
               onClick={() => handleBorrowBook(selectedBook.id)}
               disabled={isBorrowing}
-              >
+            >
               {borrowStatus || "Borrow Book"}
             </button>
-            <button onClick={handleCloseModal} className="button-close">Close</button>
+            <button onClick={handleCloseModal} className="button-close">
+              Close
+            </button>
           </Grid>
         </Grid>
       </div>
@@ -164,175 +194,13 @@ const HomePage: React.FC = () => {
     fetchBooks();
   }, [apiClient]);
   useEffect(() => {
-  console.log("Modal state changed", showModal);
-}, [showModal]);
+    console.log("Modal state changed", showModal);
+  }, [showModal]);
 
   const navigate = useNavigate();
 
   const { t, i18n } = useTranslation();
-  /* return (
-    <div>
-      <AppBar position="static" className="AppBar">
-        <Toolbar className="ToolBar">
-          <Typography
-            variant="h6"
-            component="div"
-            style={{ marginRight: "20px" }}
-          >
-            <MenuBookRoundedIcon /> My Library
-          </Typography>
-          <Button
-            color="inherit"
-            onClick={() => {
-              navigate("/home");
-            }}
-          >
-            All Books
-          </Button>
-          <Button
-            color="inherit"
-            onClick={() => {
-              navigate("/loans");
-            }}
-          >
-            Your Books
-          </Button>
-          <Button
-            color="inherit"
-            endIcon={<LogoutRoundedIcon />}
-            onClick={() => {
-              navigate("/login");
-            }}
-          >
-            Log Out
-          </Button>
-        </Toolbar>
-      </AppBar>
 
-      <Typography variant="h4" component="h2" className="section-title">
-        Most Popular Books
-      </Typography>
-      <Grid container justifyContent="center" spacing={3} className="book-list">
-        {sortedBooks.map((book, index) => {
-          console.log(book.rating);
-          return (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <Card className="book-card">
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    component="h2"
-                    className="book-title"
-                  >
-                    {book.title}
-                  </Typography>
-                  <Typography className="book-author">{book.author}</Typography>
-                  <img
-                    className="book-cover"
-                    src={book.coverImageUrl}
-                    alt={book.title}
-                    style={{ width: "100%", height: "auto" }}
-                  />
-
-                  <Rating
-                    name="book-rating"
-                    value={book.rating}
-                    precision={0.5}
-                    readOnly
-                  />
-                </CardContent>
-                <Accordion>
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                  >
-                    <Typography>Details</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Typography>
-                      Genre: {book.genre} <br />
-                      Summary: {book.summary} <br />
-                      Rating: {book.rating} <br />
-                    </Typography>
-                  </AccordionDetails>
-                </Accordion>
-              </Card>
-            </Grid>
-          );
-        })}
-      </Grid>
-
-      {genres.map((genre, index) => (
-        <div key={index}>
-          <Typography variant="h4" component="h2" className="section-title">
-            {genre}
-          </Typography>
-
-          <Grid
-            container
-            justifyContent="center"
-            spacing={3}
-            className="book-list"
-          >
-            {books
-              .filter((book) => book.genre === genre)
-              .map((book, index) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                  <Card className="book-card">
-                    <CardContent>
-                      <Typography
-                        variant="h5"
-                        component="h2"
-                        className="book-title"
-                      >
-                        {book.title}
-                      </Typography>
-                      <Typography className="book-author">
-                        {book.author}
-                      </Typography>
-                      <img
-                        className="book-cover"
-                        src={book.coverImageUrl}
-                        alt={book.title}
-                        style={{ width: "100%", height: "auto" }}
-                      />
-                      <Rating
-                        name="book-rating"
-                        value={book.rating}
-                        precision={0.5}
-                        readOnly
-                      />
-                    </CardContent>
-                    <Accordion>
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                      >
-                        <Typography>Details</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Typography>
-                          Genre: {book.genre} <br />
-                          Summary: {book.summary} <br />
-                          <Button variant="contained" color="primary">
-                            Borrow Book
-                          </Button>
-                        </Typography>
-                      </AccordionDetails>
-                    </Accordion>
-                  </Card>
-                </Grid>
-              ))}
-          </Grid>
-
-        </div>
-      ))}
-    </div>
-  );
-
-   */
   return (
     <div>
       <AppBarUser />

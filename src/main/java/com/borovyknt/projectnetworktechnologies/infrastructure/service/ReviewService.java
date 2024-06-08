@@ -27,20 +27,22 @@ public class ReviewService {
         this.loanRepository = loanRepository;
     }
 
-    public GetReviewDto getOne(long id){
-        var reviewEntity = reviewRepository.findById(id).orElseThrow(() -> NotFoundException.create("Review", id));
-        return new GetReviewDto(
-                reviewEntity.getReviewId(),
-                reviewEntity.getRating(),
-                reviewEntity.getComment(),
-                reviewEntity.getReviewDate()
-        );
+    public List<GetReviewDto> getForOne(int id){
+        var reviews = reviewRepository.findByBookId(id).orElseThrow(() -> NotFoundException.create("Review", id));
+        return reviews.stream().map((review) -> new GetReviewDto(
+                review.getReviewId(),
+                review.getBook().getId(),
+                review.getRating(),
+                review.getComment(),
+                review.getReviewDate()
+        )).toList();
     }
 
     public List<GetReviewDto> getAll(){
         var reviews = reviewRepository.findAll();
         return reviews.stream().map((review) -> new GetReviewDto(
                 review.getReviewId(),
+                review.getBook().getId(),
                 review.getRating(),
                 review.getComment(),
                 review.getReviewDate()
@@ -66,6 +68,7 @@ public class ReviewService {
         var newReview = reviewRepository.save(reviewEntity);
         return new CreateReviewResponseDto(
                 newReview.getReviewId(),
+                newReview.getBook().getId(),
                 newReview.getRating(),
                 newReview.getComment(),
                 newReview.getReviewDate()

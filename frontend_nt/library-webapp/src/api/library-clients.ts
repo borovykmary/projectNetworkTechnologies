@@ -7,6 +7,7 @@ import { Loans } from "./Loans";
 import { RegisterUserRequestDto } from "./register-user-request.dto";
 import { AddBookDetailsRequestDto } from "./add-bookdetails-request.dto";
 import { CreateBookRequestDto } from "./add-book-request.dto";
+import {GetReviewDto} from "./get-review.dto";
 
 type ClientResponse = {
   success: boolean;
@@ -326,4 +327,25 @@ export class LibraryClient {
     };
   }
 }
+public async getBookReviews(bookId: number): Promise<ClientResponse> {
+  try {
+    const response: AxiosResponse<GetReviewDto[]> = await this.client.get(
+      `/reviews/${bookId}`,
+    );
+    return {
+      success: true,
+      data: response.data,
+      status: response.status,
+    };
+  } catch (error) {
+    const axiosError = error as AxiosError<Error>;
+    return {
+      success: false,
+      data: axiosError.response?.data,
+      status: axiosError.response?.status || 500,
+    };
+  }
+}
+
+
 }

@@ -39,9 +39,10 @@ public class ReviewsController {
         return reviewService.getAll();
     }
 
-    @GetMapping("/{id}")
-    public GetReviewDto getOne(@PathVariable long id){
-        return reviewService.getOne(id);
+    @GetMapping("/{bookId}")
+    public List<GetReviewDto> getForOne(@PathVariable String bookId){
+        var bookIdInt = Integer.parseInt(bookId);
+        return reviewService.getForOne(bookIdInt);
     }
 
     @PostMapping("/{bookId}/review")

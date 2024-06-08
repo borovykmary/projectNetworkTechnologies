@@ -4,18 +4,28 @@ import java.util.Date;
 
 public class CreateReviewResponseDto {
     private int reviewId;
+    private int bookId;
     private double rating;
     private String comment;
     private Date reviewDate;
 
-    public CreateReviewResponseDto(int reviewId, double rating, String comment, Date reviewDate) {
+    public CreateReviewResponseDto(int reviewId, int bookId, double rating, String comment, Date reviewDate) {
         this.reviewId = reviewId;
+        this.bookId = bookId;
         this.rating = rating;
         this.comment = comment;
         this.reviewDate = reviewDate;
     }
 
     public CreateReviewResponseDto() {
+    }
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
     }
 
     public int getReviewId() {
