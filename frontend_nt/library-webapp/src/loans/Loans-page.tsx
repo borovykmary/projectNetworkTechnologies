@@ -11,6 +11,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Grid,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useNavigate } from "react-router-dom";
@@ -21,46 +22,51 @@ import { Loans } from "../api/Loans";
 import { useApi } from "../api/ApiProvide";
 import { Book } from "../api/Book";
 import { BookDetails } from "../api/BookDetails";
+import AppBarUser from "../components/AppBarUser";
 
 const LoansPage: React.FC = () => {
   const [loans, setLoans] = useState<Loans[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const apiClient = useApi();
 
   useEffect(() => {
     const fetchLoans = async () => {
-      const loansResponse = await apiClient.getAllLoansUser();
-      if (loansResponse.success) {
-        const fetchedLoans: Loans[] = loansResponse.data;
-        const promises = fetchedLoans.map(async (loan: Loans) => {
-          console.log("Fetching details for loan:", loan.bookId);
-          const bookResponse = await apiClient.getBook(loan.bookId);
-          console.log("Book response:", bookResponse);
-          const detailsResponse = await apiClient.getBookDetails(loan.bookId);
-          console.log("Details response:", detailsResponse);
+      const [loansResponse, booksResponse] = await Promise.all([
+        apiClient.getAllLoansUser(),
+        apiClient.getBooks(),
+      ]);
 
-          if (bookResponse.success) {
-            return {
-              ...loan,
-              book: { ...bookResponse.data, ...detailsResponse.data },
-            };
-          } else {
-            console.error(
-              "Failed to fetch details for loan:",
-              loan.loanId,
-              bookResponse.data,
-              detailsResponse.data,
+      if (loansResponse.success && booksResponse.success) {
+        const bookDetailsPromises = loansResponse.data.map((loan: Loans) =>
+          apiClient.getBookDetails(
+            typeof loan.bookId === "number" ? loan.bookId : -1,
+          ),
+        );
+        const bookDetailsResponses = await Promise.all(bookDetailsPromises);
+
+        const mappedLoans = loansResponse.data.map(
+          (loan: Loans, index: number) => {
+            const book = booksResponse.data.find(
+              (book: Book) => book.id === loan.bookId,
             );
+            const bookDetail = bookDetailsResponses[index].data;
+
+            // If the book was found, add the coverImageURL to it
+
+            book.coverImageUrl = bookDetail?.coverImageUrl;
+
+            console.log(book);
             return {
               ...loan,
-              title: "No data",
-              author: "No data",
-              coverImageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT0xwyLstvC7wH8jYIKur3GTcSq-g6fj2EbL4wk-qaONHYjBswa3rpFsZJeEjuXcG-lw&usqp=CAU",
+              coverImageUrl: bookDetail?.coverImageUrl,
+              title: book?.title,
+              author: book?.author,
             };
-          }
-        });
-        const loansWithDetails = await Promise.all(promises);
-        setLoans(loansWithDetails);
+          },
+        );
+
+        setLoans(mappedLoans);
+        setBooks(booksResponse.data);
       }
     };
 
@@ -75,107 +81,76 @@ const LoansPage: React.FC = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <AppBar position="static" className="AppBar">
-        <Toolbar className="ToolBar">
-          <Typography
-            variant="h6"
-            component="div"
-            style={{ marginRight: "20px" }}
+      <AppBarUser />
+      {loans.map((loan) => {
+        const book = books.find((book) => book.id === loan.bookId);
+        return (
+          <Card
+            key={loan.loanId}
+            className="loan-card"
+            sx={{ width: "80%", margin: "0 auto", marginBottom: 2 }}
           >
-            <MenuBookRoundedIcon /> My Library
-          </Typography>
-          <Button
-            color="inherit"
-            onClick={() => {
-              navigate("/home");
-            }}
-          >
-            All Books
-          </Button>
-          <Button
-            color="inherit"
-            onClick={() => {
-              navigate("/loans");
-            }}
-          >
-            Your Books
-          </Button>
-          <Button
-            color="inherit"
-            onClick={() => {
-              navigate("/admin");
-            }}
-          >
-            Admin Console
-          </Button>
-          <Button
-            color="inherit"
-            endIcon={<LogoutRoundedIcon />}
-            onClick={() => {
-              navigate("/login");
-            }}
-          >
-            Log Out
-          </Button>
-        </Toolbar>
-      </AppBar>
-      {loans.map((loan) => (
-        <Card
-          key={loan.loanId}
-          className="loan-card"
-          sx={{ width: "80%", margin: "0 auto" }}
-        >
-          <CardMedia
-            component="img"
-            sx={{ width: 100 }}
-            image={loan.coverImageUrl}
-            alt="Book cover"
-          />
-          <CardContent className="loan-info">
-            <Typography variant="h5">{loan.title}</Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-              {loan.author}
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-              Status: {loan.status}
-            </Typography>
-          </CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={3}>
+                <CardMedia
+                  className="book-cover"
+                  component="img"
+                  sx={{ width: 200 }}
+                  image={book?.coverImageUrl}
+                  alt="Book cover"
+                />
+              </Grid>
+              <Grid item xs={12} sm={9}>
+                <CardContent className="loan-info">
+                  <Typography className="book-title-loan" variant="h5">
+                    {book?.title}
+                  </Typography>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    {book?.author}
+                  </Typography>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    Status: {loan.status}
+                  </Typography>
+                </CardContent>
 
-          <Accordion className="details-accordion" defaultExpanded>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography>Borrowing Details</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography variant="subtitle1" color="text.secondary">
-                Borrowed: {loan.loanDate}
-              </Typography>
-              <Typography variant="subtitle1" color="text.secondary">
-                Due date: {loan.dueDate}
-              </Typography>
-              <Typography variant="subtitle1" color="text.secondary">
-                Return: {loan.returnDate}
-              </Typography>
-              <Button
-                onClick={() => handleReturn(loan.loanId)}
-                variant="outlined"
-                disabled={loan.returnDate.trim() !== ""}
-              >
-                Return
-              </Button>
-              <Button
-                onClick={() => handleAddReview(loan.loanId)}
-                variant="outlined"
-              >
-                Add Review
-              </Button>
-            </AccordionDetails>
-          </Accordion>
-        </Card>
-      ))}
+                <Accordion className="details-accordion">
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography>Borrowing Details</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      Borrowed: {loan.loanDate}
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      Due date: {loan.dueDate}
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      Return: {loan.returnDate}
+                    </Typography>
+                    <Button
+                      onClick={() => handleReturn(loan.loanId)}
+                      variant="outlined"
+                      disabled={loan.returnDate.trim() !== ""}
+                    >
+                      Return
+                    </Button>
+                    <Button
+                      onClick={() => handleAddReview(loan.loanId)}
+                      variant="outlined"
+                    >
+                      Add Review
+                    </Button>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+            </Grid>
+          </Card>
+        );
+      })}
     </div>
   );
 };

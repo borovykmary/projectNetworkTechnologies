@@ -27,7 +27,6 @@ public class BookDetailService {
     public GetBookDetailsDto getOne(int id){
         var bookDetailsEntity = bookDetailRepository.findByBookId(id).orElseThrow(() -> NotFoundException.create("Book Detail", id));
         return new GetBookDetailsDto(
-                bookDetailsEntity.getId(),
                 bookDetailsEntity.getBook().getId(),
                 bookDetailsEntity.getGenre(),
                 bookDetailsEntity.getSummary(),
@@ -38,7 +37,6 @@ public class BookDetailService {
     public List<GetBookDetailsDto> getAll(){
         var bookDetails = bookDetailRepository.findAll();
         return bookDetails.stream().map((bookDetail) -> new GetBookDetailsDto(
-                bookDetail.getId(),
                 bookDetail.getBook().getId(),
                 bookDetail.getGenre(),
                 bookDetail.getSummary(),

@@ -25,9 +25,7 @@ import { BookDetails } from "../api/BookDetails";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AppBarUser from "../components/AppBarUser";
-import {GetReviewDto} from "../api/get-review.dto";
-
-// const sortedBooks = books.sort((a, b) => b.rating - a.rating).slice(0, 4);
+import { GetReviewDto } from "../api/get-review.dto";
 
 const HomePage: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -41,9 +39,10 @@ const HomePage: React.FC = () => {
   const [isBorrowing, setIsBorrowing] = useState<boolean>(false);
   const [reviews, setReviews] = useState<GetReviewDto[]>([]);
 
-  const handleBorrowBook = async (bookId: number) => {
+  const handleBorrowBook = async (book: Book) => {
     setIsBorrowing(true);
-    const response = await apiClient.borrowBook(bookId);
+    const response = await apiClient.borrowBook(book.id);
+    console.log("Borrow Book id:", book.id);
     if (response.success) {
       setBorrowStatus(response.data.status);
       setIsBorrowing(true);
@@ -72,9 +71,9 @@ const HomePage: React.FC = () => {
   const Modal = () => {
     if (!showModal || !selectedBook) return null;
 
-
     const averageRating =
-        reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length || 0;
+      reviews.reduce((sum, review) => sum + review.rating, 0) /
+        reviews.length || 0;
 
     return (
       <div className="modal">
@@ -120,16 +119,16 @@ const HomePage: React.FC = () => {
             <Typography className="book-reviews">
               Review Comments:
               {reviews.length > 0 ? (
-                  reviews.map((review, index) => (
-                      <Typography key={index}>{review.comment}</Typography>
-                  ))
+                reviews.map((review, index) => (
+                  <Typography key={index}>{review.comment}</Typography>
+                ))
               ) : (
-                  <Typography>No comments yet provided</Typography>
+                <Typography>No comments yet provided</Typography>
               )}
             </Typography>
             <button
               className="button-borrow"
-              onClick={() => handleBorrowBook(selectedBook.id)}
+              onClick={() => handleBorrowBook(selectedBook)}
               disabled={isBorrowing}
             >
               {borrowStatus || "Borrow Book"}
@@ -151,6 +150,7 @@ const HomePage: React.FC = () => {
         const promises = fetchedBooks.map(async (book: Book) => {
           const detailsResponse = await apiClient.getBookDetails(book.id);
           if (detailsResponse.success) {
+            console.log("Details for book id:", book);
             return { ...book, ...detailsResponse.data };
           } else {
             console.error(

@@ -23,14 +23,17 @@ public class LoanEntity {
 
     @Basic
     @Column(name = "loan_date")
+    @Temporal(TemporalType.DATE)
     private Date loanDate;
 
     @Basic
     @Column(name = "due_date")
+    @Temporal(TemporalType.DATE)
     private Date dueDate;
 
     @Basic
     @Column(name = "return_date")
+    @Temporal(TemporalType.DATE)
     private Date returnDate;
 
     @Enumerated(EnumType.STRING)

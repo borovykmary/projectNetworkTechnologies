@@ -7,7 +7,7 @@ import { Loans } from "./Loans";
 import { RegisterUserRequestDto } from "./register-user-request.dto";
 import { AddBookDetailsRequestDto } from "./add-bookdetails-request.dto";
 import { CreateBookRequestDto } from "./add-book-request.dto";
-import {GetReviewDto} from "./get-review.dto";
+import { GetReviewDto } from "./get-review.dto";
 
 type ClientResponse = {
   success: boolean;
@@ -108,8 +108,7 @@ export class LibraryClient {
       if (axiosError.response?.status === 404) {
         // Return default values if details are not found
         const defaultDetails: BookDetails = {
-          id: -1,
-          bookId: bookId,
+          id: bookId,
           genre: "No data",
           summary: "No data",
           coverImageUrl:
@@ -284,68 +283,66 @@ export class LibraryClient {
     }
   }
   public async borrowBook(bookId: number): Promise<ClientResponse> {
-  try {
-    const token = localStorage.getItem("token");
-    const axiosConfig = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
 
-    // Get today's date and format it as YYYY-MM-DD
-    const today = new Date();
-    const loanDate = today.toISOString().split('T')[0];
+      // Get today's date and format it as YYYY-MM-DD
+      const today = new Date();
+      const loanDate = today.toISOString().split("T")[0];
 
-    // Calculate due date (one month from today) and format it as YYYY-MM-DD
-    const dueDate = new Date();
-    dueDate.setMonth(dueDate.getMonth() + 1);
-    const dueDateString = dueDate.toISOString().split('T')[0];
+      // Calculate due date (one month from today) and format it as YYYY-MM-DD
+      const dueDate = new Date();
+      dueDate.setMonth(dueDate.getMonth() + 1);
+      const dueDateString = dueDate.toISOString().split("T")[0];
 
-    const loanDetails = {
-      loanDate: loanDate,
-      returnDate: "",
-      dueDate: dueDateString
-    };
+      const loanDetails = {
+        loanDate: loanDate,
+        returnDate: "",
+        dueDate: dueDateString,
+      };
 
-    const response: AxiosResponse = await this.client.post(
-      `/loans/${bookId}/borrow`,
-      loanDetails,
-      axiosConfig,
-    );
+      const response: AxiosResponse = await this.client.post(
+        `/loans/${bookId}/borrow`,
+        loanDetails,
+        axiosConfig,
+      );
 
-    return {
-      success: true,
-      data: response.data,
-      status: response.status,
-    };
-  } catch (error) {
-    const axiosError = error as AxiosError<Error>;
-    return {
-      success: false,
-      data: axiosError.response?.data,
-      status: axiosError.response?.status || 500,
-    };
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
   }
-}
-public async getBookReviews(bookId: number): Promise<ClientResponse> {
-  try {
-    const response: AxiosResponse<GetReviewDto[]> = await this.client.get(
-      `/reviews/${bookId}`,
-    );
-    return {
-      success: true,
-      data: response.data,
-      status: response.status,
-    };
-  } catch (error) {
-    const axiosError = error as AxiosError<Error>;
-    return {
-      success: false,
-      data: axiosError.response?.data,
-      status: axiosError.response?.status || 500,
-    };
+  public async getBookReviews(bookId: number): Promise<ClientResponse> {
+    try {
+      const response: AxiosResponse<GetReviewDto[]> = await this.client.get(
+        `/reviews/${bookId}`,
+      );
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
   }
-}
-
-
 }
