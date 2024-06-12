@@ -4,6 +4,9 @@ import * as Yup from "yup";
 import "./ManageUsers.css";
 import { useApi } from "../api/ApiProvide";
 import { RegisterUserRequestDto } from "../api/register-user-request.dto";
+import { Users } from "../api/Users";
+import { Card, CardContent, Typography } from "@mui/material";
+import { use } from "i18next";
 
 interface UserFormValues {
   userId: number;
@@ -27,10 +30,20 @@ function DeleteUser({ deleteUser }: DeleteUserProps) {
         setSubmitting(false);
       }}
     >
-      <Form>
-        <Field name="userId" type="text" placeholder="User ID" />
-        <ErrorMessage name="userId" component="div" />
-        <button type="submit">Delete User</button>
+      <Form className="form-selection">
+        <div className="form-group">
+          <label htmlFor="userId">User ID</label>
+
+          <Field name="userId" type="text" placeholder="User ID" />
+          <ErrorMessage
+            name="userId"
+            component="div"
+            className="error-message"
+          />
+          <div className="button-group">
+            <button type="submit">Delete User</button>
+          </div>
+        </div>
       </Form>
     </Formik>
   );
@@ -38,7 +51,6 @@ function DeleteUser({ deleteUser }: DeleteUserProps) {
 
 const ManageUsers: React.FC = () => {
   const [users, setUsers] = useState<UserFormValues[]>([]);
-  const [message, setMessage] = useState<string | null>(null);
   const apiClient = useApi();
 
   const addUser = async (values: UserFormValues) => {
@@ -48,34 +60,41 @@ const ManageUsers: React.FC = () => {
       role: values.role,
       email: values.email,
     };
-    try {
-      const response = await apiClient.registerUser(data);
 
-      if (response === 201) {
-        setUsers([...users, values]);
-        setMessage("User is successfully created");
-      } else {
-        console.error(`User registration failed with status code ${response}`);
-        setMessage("User registration failed");
-      }
-    } catch (error) {
-      console.error(error);
+    const response = await apiClient.registerUser(data);
+
+    if (response === 201) {
+      setUsers([...users, values]);
+      alert("User is successfully added");
+    } else {
+      console.error(`User registration failed with status code ${response}`);
+      alert("User registration failed");
     }
   };
+  const [allUsers, setAllUsers] = useState<Users[]>([]);
 
+  const handleSeeAllUsers = async () => {
+    const response = await apiClient.getAllUsers();
+    if (response.success) {
+      setAllUsers(response.data);
+    } else if (response.status === 403) {
+      alert("You do not have ADMIN permissions");
+    } else {
+      alert("Failed to retrieve users");
+    }
+  };
   const handleDeleteUser = async (userId: number) => {
     const response = await apiClient.deleteUser(userId);
     if (response.success) {
-      setMessage("User is successfully deleted");
+      alert("User is successfully deleted");
     } else {
-      setMessage("User deletion failed");
+      alert("User deletion failed");
     }
   };
 
   return (
     <div className="manage-users">
       <h2>Add User</h2>
-      {message && <p>{message}</p>}
       <Formik
         initialValues={{
           userId: 0,
@@ -97,26 +116,72 @@ const ManageUsers: React.FC = () => {
           resetForm();
         }}
       >
-        <Form>
-          <Field name="username" type="text" placeholder="Username" />
-          <ErrorMessage name="username" component="div" />
-          <Field name="password" type="password" placeholder="Password" />
-          <ErrorMessage name="password" component="div" />
-          <Field as="select" name="role">
-            <option value="">Select a role</option>
-            <option value="ROLE_ADMIN">ROLE_ADMIN</option>
-            <option value="ROLE_READER">ROLE_READER</option>
-          </Field>
-          <ErrorMessage name="role" component="div" />
-          <Field name="email" type="email" placeholder="Email" />
-          <ErrorMessage name="email" component="div" />
-          <button type="submit">Add User</button>
+        <Form className="form-section">
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <Field name="username" type="text" placeholder="Username" />
+            <ErrorMessage
+              name="username"
+              component="div"
+              className="error-message"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <Field name="password" type="password" placeholder="Password" />
+            <ErrorMessage
+              name="password"
+              component="div"
+              className="error-message"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="role">Role</label>
+            <Field as="select" name="role">
+              <option value="">Select a role</option>
+              <option value="ROLE_ADMIN">ROLE_ADMIN</option>
+              <option value="ROLE_READER">ROLE_READER</option>
+            </Field>
+            <ErrorMessage
+              name="role"
+              component="div"
+              className="error-message"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <Field name="email" type="email" placeholder="Email" />
+            <ErrorMessage
+              name="email"
+              component="div"
+              className="error-message"
+            />
+          </div>
+          <div className="button-group">
+            <button type="submit">Add User</button>
+          </div>
         </Form>
       </Formik>
 
       <h2>Delete User</h2>
-      {message && <p>{message}</p>}
       <DeleteUser deleteUser={handleDeleteUser} />
+      <h2>All Users</h2>
+      <div className="button-group">
+        <button type="submit" onClick={handleSeeAllUsers}>
+          See All Users
+        </button>
+      </div>
+      <div>
+        {allUsers.map((user) => (
+          <Card key={user.userId}>
+            <CardContent>
+              <Typography variant="h5">User ID: {user.userId}</Typography>
+              <Typography variant="h5">Email: {user.email}</Typography>
+              <Typography variant="h5">Username: {user.name}</Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

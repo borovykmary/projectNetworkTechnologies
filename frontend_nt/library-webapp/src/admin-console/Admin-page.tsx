@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AppBar, Toolbar, Button, Typography } from "@mui/material";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import ManageUsers from "./Manage-Users";
 import ManageBooks from "./Manage-Books";
 import ManageLoans from "./Manage-Loans";
@@ -8,6 +14,12 @@ import "./AdminConsole.css";
 import HomePage from "../home-page/Home-page";
 
 const AdminConsole: React.FC = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/admin/users");
+  }, []);
+
   return (
     <div>
       <AppBar position="static" className="AppBar">

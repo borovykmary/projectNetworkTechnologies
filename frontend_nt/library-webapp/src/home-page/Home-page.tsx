@@ -35,7 +35,6 @@ const HomePage: React.FC = () => {
   const apiClient = useApi();
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
-  const [borrowStatus, setBorrowStatus] = useState<string | null>(null);
   const [isBorrowing, setIsBorrowing] = useState<boolean>(false);
   const [reviews, setReviews] = useState<GetReviewDto[]>([]);
 
@@ -44,10 +43,10 @@ const HomePage: React.FC = () => {
     const response = await apiClient.borrowBook(book.id);
     console.log("Borrow Book id:", book.id);
     if (response.success) {
-      setBorrowStatus(response.data.status);
+      alert("Book borrow requested");
       setIsBorrowing(true);
     } else {
-      setBorrowStatus(response.data.status);
+      alert("Failed to borrow book");
     }
     setIsBorrowing(false);
   };
@@ -131,7 +130,7 @@ const HomePage: React.FC = () => {
               onClick={() => handleBorrowBook(selectedBook)}
               disabled={isBorrowing}
             >
-              {borrowStatus || "Borrow Book"}
+              Borrow Book
             </button>
             <button onClick={handleCloseModal} className="button-close">
               Close

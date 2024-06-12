@@ -1,27 +1,57 @@
 import React, { useState } from "react";
-import { Button, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  Typography,
+} from "@mui/material";
 import "./ManageLoans.css";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, useFormikContext, ErrorMessage } from "formik";
+import { useApi } from "../api/ApiProvide";
+import { Loans } from "../api/Loans";
+import * as Yup from "yup";
 
 const ManageLoans: React.FC = () => {
   const [loanIdForBorrow, setLoanIdForBorrow] = useState("");
   const [loanIdForReturn, setLoanIdForReturn] = useState("");
-  const [loanIdForSearch, setLoanIdForSearch] = useState("");
 
-  const handleSeeAllLoans = () => {
-    // Implement the logic to see all loans
+  const apiClient = useApi();
+
+  const [allLoans, setAllLoans] = useState<Loans[]>([]);
+
+  const handleSeeAllLoans = async () => {
+    const response = await apiClient.getAllLoans();
+    if (response.success) {
+      setAllLoans(response.data);
+    } else if (response.status === 403) {
+      alert("You do not have ADMIN permissions");
+    } else {
+      alert("Failed to retrieve loans");
+    }
   };
 
-  const handleProcessBorrow = () => {
-    // Implement the logic to process borrowing of a book
+  const handleProcessBorrow = async () => {
+    const response = await apiClient.processLoan(loanIdForBorrow);
+    console.log("loan id to borrow " + loanIdForBorrow);
+    if (response.status === 200) {
+      alert("Loan processed successfully");
+    } else if (response.status === 403) {
+      alert("You do not have ADMIN permissions");
+    } else {
+      alert("failed processing loan");
+    }
   };
 
-  const handleProcessReturn = () => {
-    // Implement the logic to process returning of a book
-  };
-
-  const handleSearch = () => {
-    // Implement the logic to search for loans
+  const handleProcessReturn = async () => {
+    const response = await apiClient.processReturn(loanIdForReturn);
+    if (response.status === 200) {
+      alert("Loan return processed successfully");
+    } else if (response.status === 403) {
+      alert("You do not have ADMIN permissions");
+    } else {
+      alert("failed processing loan return");
+    }
   };
 
   return (
@@ -30,45 +60,77 @@ const ManageLoans: React.FC = () => {
         initialValues={{
           loanIdForBorrow: "",
           loanIdForReturn: "",
-          loanIdForSearch: "",
         }}
-        onSubmit={(values, { setSubmitting }) => {
-          // Implement the logic to process borrowing, returning, and searching
+        validationSchema={Yup.object({
+          loanIdForBorrow: Yup.string().required("Required"),
+          loanIdForReturn: Yup.string().required("Required"),
+        })}
+        onSubmit={(values, { setSubmitting, resetForm }) => {
           setSubmitting(false);
+          resetForm();
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, setFieldValue }) => (
           <Form>
             <div className="form-section">
-              <Typography variant="h5">Process Borrowing of Book</Typography>
+              <h2>Process Borrowing of Book</h2>
               <div className="form-group">
-                <Field as={TextField} name="loanIdForBorrow" label="Loan ID" />
-                <button type="submit" disabled={isSubmitting}>
-                  Process Borrow
-                </button>
+                <label htmlFor="loanId">Loan ID</label>
+                <Field
+                  name="loanIdForBorrow"
+                  type="text"
+                  onChange={(e: any) => {
+                    setLoanIdForBorrow(e.target.value);
+                    setFieldValue("loanIdForBorrow", e.target.value);
+                  }}
+                />
+                <ErrorMessage
+                  name="loanIdForBorrow"
+                  component="div"
+                  className="error-message"
+                />
+                <div className="button-group">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    onClick={handleProcessBorrow}
+                  >
+                    Process Borrow
+                  </button>
+                </div>
               </div>
             </div>
 
             <div className="form-section">
-              <Typography variant="h5">Process Returning of Book</Typography>
+              <h2>Process Returning of Book</h2>
               <div className="form-group">
-                <Field as={TextField} name="loanIdForReturn" label="Loan ID" />
-                <button type="submit" disabled={isSubmitting}>
-                  Process Return
-                </button>
+                <label htmlFor="loanId">Loan ID</label>
+                <Field
+                  name="loanIdForReturn"
+                  type="text"
+                  onChange={(e: any) => {
+                    setLoanIdForReturn(e.target.value);
+                    setFieldValue("loanIdForReturn", e.target.value);
+                  }}
+                />
+                <ErrorMessage
+                  name="loanIdForReturn"
+                  component="div"
+                  className="error-message"
+                />
+                <div className="button-group">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    onClick={handleProcessReturn}
+                  >
+                    Process Return
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="form-section">
-              <Typography variant="h5">Search for Loans</Typography>
-              <div className="form-group">
-                <Field as={TextField} name="loanIdForSearch" label="Loan ID" />
-                <button type="submit" disabled={isSubmitting}>
-                  Search
-                </button>
-              </div>
-            </div>
-            <Typography variant="h5">All Loans</Typography>
-            <div className="form-group">
+            <h2>All Loans</h2>
+            <div className="button-group">
               <button type="submit" onClick={handleSeeAllLoans}>
                 See All Loans
               </button>
@@ -76,6 +138,22 @@ const ManageLoans: React.FC = () => {
           </Form>
         )}
       </Formik>
+      <div className="all-loans">
+        {allLoans.map((loan) => (
+          <Card key={loan.loanId}>
+            <CardContent>
+              <Typography variant="h5">Loan ID: {loan.loanId}</Typography>
+              <Typography variant="h5">Book ID: {loan.bookId}</Typography>
+              <Typography variant="h5">Loan Date: {loan.loanDate}</Typography>
+              <Typography variant="h5">Due Date: {loan.dueDate}</Typography>
+              <Typography variant="h5">
+                Return Date: {loan.returnDate}
+              </Typography>
+              <Typography variant="h5">Status: {loan.status}</Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

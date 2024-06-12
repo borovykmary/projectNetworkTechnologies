@@ -5,6 +5,8 @@ import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import { Link } from "react-router-dom";
 import { t } from "i18next";
 import { useTranslation } from "react-i18next";
+import "./AppBarUser.css";
+
 const AppBarUser = () => {
   const { t, i18n } = useTranslation();
   return (
@@ -17,17 +19,25 @@ const AppBarUser = () => {
         >
           <MenuBookRoundedIcon /> {t("library")}
         </Typography>
-        <Button color="inherit">
-          <Link to="/home"> {t("books")} </Link>
+        <Button color="inherit" component={Link} to="/home">
+          {" "}
+          {t("books")}
         </Button>
-        <Button color="inherit">
-          <Link to="/loans"> Your Books </Link>
+        <Button color="inherit" component={Link} to="/loans">
+          {" "}
+          Your Books
         </Button>
-        <Button color="inherit">
-          <Link to="/admin"> Admin Console </Link>
+        <Button color="inherit" component={Link} to="/admin">
+          {" "}
+          Admin Console
         </Button>
-        <Button color="inherit" endIcon={<LogoutRoundedIcon />}>
-          <Link to="/login">Log out</Link>
+        <Button
+          color="inherit"
+          endIcon={<LogoutRoundedIcon />}
+          component={Link}
+          to="/login"
+        >
+          Log out
         </Button>
       </Toolbar>
     </AppBar>

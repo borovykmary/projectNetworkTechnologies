@@ -46,8 +46,8 @@ public class LoanService {
         return loans.stream().map((loan) -> new GetLoanDto(
                 loan.getLoanId(),
                 loan.getLoanDate(),
-                loan.getReturnDate(),
                 loan.getDueDate(),
+                loan.getReturnDate(),
                 loan.getStatus(),
                 loan.getBook().getId()
         )).toList();
@@ -58,8 +58,8 @@ public class LoanService {
         return loans.stream().map((loan) -> new GetLoanDto(
                 loan.getLoanId(),
                 loan.getLoanDate(),
-                loan.getReturnDate(),
                 loan.getDueDate(),
+                loan.getReturnDate(),
                 loan.getStatus(),
                 loan.getBook().getId()
         )).toList();

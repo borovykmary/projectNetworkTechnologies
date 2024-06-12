@@ -78,7 +78,7 @@ public class LoansController {
 
     @PostMapping("/{loanId}/return")
     public ResponseEntity<CreateReturnLoanResponseDto> returnBook(@PathVariable String loanId, HttpServletRequest request, @RequestBody CreateReturnLoanDto returnLoanDto){
-        var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
+        var loanIdInt = Integer.parseInt(loanId);
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (token != null && token.startsWith("Bearer ")) {
@@ -88,23 +88,23 @@ public class LoansController {
         var userEntity = userRepository.findByuserId(userId)
                 .orElseThrow(() -> NotFoundException.create("User", userId));
 
-        var newReturnLoan = loanService.returnBook(returnLoanDto, loanIdLong, userEntity);
+        var newReturnLoan = loanService.returnBook(returnLoanDto, loanIdInt, userEntity);
         return new ResponseEntity<>(newReturnLoan, HttpStatus.OK);
     }
 
     @PostMapping("/{loanId}/process")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> processLoan(@PathVariable String loanId){
-        var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
-        loanService.processLoan(loanIdLong);
+        var loanIdInt = Integer.parseInt(loanId);
+        loanService.processLoan(loanIdInt);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/{loanId}/return/process")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> processReturn(@PathVariable String loanId){
-        var loanIdLong = Long.parseLong(loanId.substring(1, loanId.length() - 1));
-        loanService.processReturn(loanIdLong);
+        var loanIdInt = Integer.parseInt(loanId);
+        loanService.processReturn(loanIdInt);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

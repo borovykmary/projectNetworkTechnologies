@@ -72,13 +72,23 @@ const LoansPage: React.FC = () => {
 
     fetchLoans();
   }, [apiClient]);
-  const handleReturn = (id: number) => {
-    console.log(`Return book with id ${id}`);
+  const handleReturn = async (loanId: number) => {
+    const userConfirmation = window.confirm(
+      "Are you sure you want to return this book?",
+    );
+    if (userConfirmation) {
+      const response = await apiClient.returnBook(loanId);
+      if (response.status === 200) {
+        alert("Book return was requested");
+      } else {
+        alert("Failed to request book return");
+      }
+    }
   };
   const handleAddReview = (id: number) => {
     console.log(`Add review for book with id ${id}`);
   };
-  const navigate = useNavigate();
+
   return (
     <div>
       <AppBarUser />
@@ -134,7 +144,7 @@ const LoansPage: React.FC = () => {
                     <Button
                       onClick={() => handleReturn(loan.loanId)}
                       variant="outlined"
-                      disabled={loan.returnDate.trim() !== ""}
+                      disabled={loan.status !== "BORROWED"}
                     >
                       Return
                     </Button>

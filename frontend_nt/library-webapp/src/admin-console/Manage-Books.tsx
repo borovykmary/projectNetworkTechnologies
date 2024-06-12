@@ -45,10 +45,18 @@ function DeleteBook({ deleteBook }: DeleteBookProps) {
         setSubmitting(false);
       }}
     >
-      <Form>
-        <Field name="bookId" type="text" placeholder="Book ID" />
-        <ErrorMessage name="bookId" component="div" />
-        <button type="submit">Delete Book</button>
+      <Form className="form-section">
+        <div className="form-group">
+          <Field name="bookId" type="text" placeholder="Book ID" />
+          <ErrorMessage
+            name="bookId"
+            component="div"
+            className="error-message"
+          />
+        </div>
+        <div className="button-group">
+          <button type="submit">Delete Book</button>
+        </div>
       </Form>
     </Formik>
   );
@@ -57,7 +65,6 @@ function DeleteBook({ deleteBook }: DeleteBookProps) {
 const ManageBooks: React.FC = () => {
   const [books, setBooks] = useState<BookFormValues[]>([]);
   const [bookDetails, setBookDetails] = useState<BookDetailsFormValues[]>([]);
-  const [message, setMessage] = useState<string | null>(null);
   const apiClient = useApi();
 
   const addBook = async (values: BookFormValues) => {
@@ -74,10 +81,10 @@ const ManageBooks: React.FC = () => {
 
       if (response === 201) {
         setBooks([...books, values]);
-        setMessage("Book is successfully created");
+        alert("Book is successfully created");
       } else {
         console.error(`Book creation failed with status code ${response}`);
-        setMessage("Book creation failed");
+        alert("Book creation failed");
       }
     } catch (error) {
       console.error(error);
@@ -96,12 +103,12 @@ const ManageBooks: React.FC = () => {
 
       if (response === 201) {
         setBookDetails([...bookDetails, values]);
-        setMessage("Book Details is successfully updated");
+        alert("Book Details is successfully updated");
       } else {
         console.error(
           `Book details creation failed with status code ${response}`,
         );
-        setMessage("Book details creation failed");
+        alert("Book details creation failed");
       }
     } catch (error) {
       console.error(error);
@@ -111,16 +118,15 @@ const ManageBooks: React.FC = () => {
   const handleDeleteBook = async (bookId: number) => {
     const response = await apiClient.deleteBook(bookId);
     if (response.success) {
-      setMessage("Book is successfully deleted");
+      alert("Book is successfully deleted");
     } else {
-      setMessage("Book deletion failed");
+      alert("Book deletion failed");
     }
   };
 
   return (
     <div className="manage-books">
       <h2>Add Book</h2>
-      {message && <p>{message}</p>}
       <Formik
         initialValues={{
           isbn: "",
@@ -217,7 +223,7 @@ const ManageBooks: React.FC = () => {
       </Formik>
 
       <h2>Update Book Details</h2>
-      {message && <p>{message}</p>}
+
       <Formik
         initialValues={{
           bookId: 0,
@@ -284,7 +290,7 @@ const ManageBooks: React.FC = () => {
       </Formik>
 
       <h2>Delete Book</h2>
-      {message && <p>{message}</p>}
+
       <DeleteBook deleteBook={handleDeleteBook} />
     </div>
   );

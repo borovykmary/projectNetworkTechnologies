@@ -326,11 +326,191 @@ export class LibraryClient {
       };
     }
   }
+  public async returnBook(loanId: number): Promise<ClientResponse> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+      const today = new Date();
+
+      const returnDate = today.toISOString().split("T")[0];
+
+      const loanDetails = {
+        returnDate: returnDate,
+      };
+
+      const response: AxiosResponse = await this.client.post(
+        `/loans/${loanId}/return`,
+        loanDetails,
+        axiosConfig,
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
   public async getBookReviews(bookId: number): Promise<ClientResponse> {
     try {
       const response: AxiosResponse<GetReviewDto[]> = await this.client.get(
         `/reviews/${bookId}`,
       );
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
+  public async processLoan(loanId: string): Promise<ClientResponse> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response: AxiosResponse = await this.client.post(
+        `/loans/${loanId}/process`,
+        axiosConfig,
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
+
+  public async processReturn(loanId: string): Promise<ClientResponse> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response: AxiosResponse = await this.client.post(
+        `/loans/${loanId}/return/process`,
+        {},
+        axiosConfig,
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
+
+  public async getAllLoans(): Promise<ClientResponse> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response: AxiosResponse = await this.client.get(
+        `/loans`,
+        axiosConfig,
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
+
+  public async getOneLoan(loanId: string): Promise<ClientResponse> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response: AxiosResponse = await this.client.get(
+        `/loans/${loanId}`,
+        axiosConfig,
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
+  public async getAllUsers(): Promise<ClientResponse> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response: AxiosResponse = await this.client.get(
+        `/users`,
+        axiosConfig,
+      );
+
       return {
         success: true,
         data: response.data,
