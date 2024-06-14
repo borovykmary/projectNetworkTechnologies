@@ -16,6 +16,7 @@ import { useApi } from "../api/ApiProvide";
 import { CreateBookRequestDto } from "../api/add-book-request.dto";
 import { AddBookDetailsRequestDto } from "../api/add-bookdetails-request.dto";
 import { Book } from "../api/Book";
+import { useTranslation } from "react-i18next";
 
 /*interface BookFormValues {
   isbn: string;
@@ -36,6 +37,7 @@ interface DeleteBookProps {
 }
 
 function DeleteBook({ deleteBook }: DeleteBookProps) {
+  const { t, i18n } = useTranslation();
   return (
     <Formik
       initialValues={{ deleteBook: 0 }}
@@ -56,7 +58,7 @@ function DeleteBook({ deleteBook }: DeleteBookProps) {
           />
         </div>
         <div className="button-group">
-          <button type="submit">Delete Book</button>
+          <button type="submit">{t("delete-book")}</button>
         </div>
       </Form>
     </Formik>
@@ -64,8 +66,11 @@ function DeleteBook({ deleteBook }: DeleteBookProps) {
 }
 
 const ManageBooks: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [books, setBooks] = useState<CreateBookRequestDto[]>([]);
-  const [bookDetails, setBookDetails] = useState<AddBookDetailsRequestDto[]>([]);
+  const [bookDetails, setBookDetails] = useState<AddBookDetailsRequestDto[]>(
+    [],
+  );
   const apiClient = useApi();
 
   const addBook = async (values: CreateBookRequestDto) => {
@@ -128,7 +133,7 @@ const ManageBooks: React.FC = () => {
 
   const handleSeeAllBooks = async () => {
     const response = await apiClient.getBooks();
-    console.log(response.data)
+    console.log(response.data);
     if (response.success) {
       setAllBooks(response.data);
     } else {
@@ -138,7 +143,7 @@ const ManageBooks: React.FC = () => {
 
   return (
     <div className="manage-books">
-      <h2>Add Book</h2>
+      <h2>{t("add-book")}</h2>
       <Formik
         initialValues={{
           isbn: "",
@@ -167,8 +172,8 @@ const ManageBooks: React.FC = () => {
       >
         <Form className="form-section">
           <div className="form-group">
-            <label htmlFor="isbn">ISBN</label>
-            <Field name="isbn" type="text" placeholder="ISBN" />
+            <label htmlFor="isbn">{t("isbn")}</label>
+            <Field name="isbn" type="text" placeholder={t("isbn")} />
             <ErrorMessage
               name="isbn"
               component="div"
@@ -185,8 +190,8 @@ const ManageBooks: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="author">Author</label>
-            <Field name="author" type="text" placeholder="Author" />
+            <label htmlFor="author">{t("author")}</label>
+            <Field name="author" type="text" placeholder={t("author")} />
             <ErrorMessage
               name="author"
               component="div"
@@ -194,8 +199,8 @@ const ManageBooks: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="publisher">Publisher</label>
-            <Field name="publisher" type="text" placeholder="Publisher" />
+            <label htmlFor="publisher">{t("publisher")}</label>
+            <Field name="publisher" type="text" placeholder={t("publisher")} />
             <ErrorMessage
               name="publisher"
               component="div"
@@ -203,11 +208,11 @@ const ManageBooks: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="yearPublished">Year Published</label>
+            <label htmlFor="yearPublished">{t("yearPublished")}</label>
             <Field
               name="yearPublished"
               type="number"
-              placeholder="Year Published"
+              placeholder={t("yearPublished")}
             />
             <ErrorMessage
               name="yearPublished"
@@ -229,12 +234,12 @@ const ManageBooks: React.FC = () => {
             />
           </div>
           <div className="button-group">
-            <button type="submit">Add Book</button>
+            <button type="submit">{t("add-book")}</button>
           </div>
         </Form>
       </Formik>
 
-      <h2>Update Book Details</h2>
+      <h2>{t("update-book-details")}</h2>
 
       <Formik
         initialValues={{
@@ -265,8 +270,8 @@ const ManageBooks: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="genre">Genre</label>
-            <Field name="genre" type="text" placeholder="Genre" />
+            <label htmlFor="genre">{t("genre")}</label>
+            <Field name="genre" type="text" placeholder={t("genre")} />
             <ErrorMessage
               name="genre"
               component="div"
@@ -274,8 +279,8 @@ const ManageBooks: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="summary">Summary</label>
-            <Field name="summary" as="textarea" placeholder="Summary" />
+            <label htmlFor="summary">{t("summary")}</label>
+            <Field name="summary" as="textarea" placeholder={t("summary")} />
             <ErrorMessage
               name="summary"
               component="div"
@@ -301,13 +306,13 @@ const ManageBooks: React.FC = () => {
         </Form>
       </Formik>
 
-      <h2>Delete Book</h2>
+      <h2>{t("delete-book")}</h2>
 
       <DeleteBook deleteBook={handleDeleteBook} />
-      <h2>All Books</h2>
+      <h2>{t("books")}</h2>
       <div className="button-group">
         <button type="submit" onClick={handleSeeAllBooks}>
-          See All Books
+          {t("see-all-books-button")}
         </button>
       </div>
       <div>
@@ -323,7 +328,7 @@ const ManageBooks: React.FC = () => {
                 Year Published: {book.yearPublished}
               </Typography>
               <Typography variant="h5">
-                Is Available: {book.available ? 'Available' : 'Not Available'}
+                Is Available: {book.available ? "Available" : "Not Available"}
               </Typography>
             </CardContent>
           </Card>

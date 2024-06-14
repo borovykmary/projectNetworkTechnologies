@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { AppBar, Toolbar, Button, Typography } from "@mui/material";
+import { AppBar, Toolbar, Button, Typography, Grid } from "@mui/material";
 import {
   BrowserRouter as Router,
   Route,
@@ -12,9 +12,16 @@ import ManageBooks from "./Manage-Books";
 import ManageLoans from "./Manage-Loans";
 import "./AdminConsole.css";
 import HomePage from "../home-page/Home-page";
+import { useTranslation } from "react-i18next";
+import Flag from "@mui/icons-material/FlagRounded";
+import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
 
 const AdminConsole: React.FC = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (language: string) => {
+    i18n.changeLanguage(language);
+  };
 
   useEffect(() => {
     navigate("/admin/users");
@@ -25,19 +32,31 @@ const AdminConsole: React.FC = () => {
       <AppBar position="static" className="AppBar">
         <Toolbar className="ToolBar">
           <Typography variant="h6" component="div" style={{ flexGrow: 1 }}>
-            Admin Console
+            {t("admin-console")}
           </Typography>
+          <Grid container direction="column" alignItems="center">
+            <Grid item>
+              <Button color="inherit" onClick={() => changeLanguage("en")}>
+                <Flag /> EN
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button color="inherit" onClick={() => changeLanguage("ua")}>
+                <Flag /> UA
+              </Button>
+            </Grid>
+          </Grid>
           <Button color="inherit" component={Link} to="/admin/users">
-            Manage Users
+            {t("manage-users")}
           </Button>
           <Button color="inherit" component={Link} to="/admin/books">
-            Manage Books
+            {t("manage-books")}
           </Button>
           <Button color="inherit" component={Link} to="/admin/loans">
-            Manage Loans
+            {t("manage-loans")}
           </Button>
           <Button color="inherit" component={Link} to="/home">
-            Home Page
+            {t("home-page")}
           </Button>
         </Toolbar>
       </AppBar>

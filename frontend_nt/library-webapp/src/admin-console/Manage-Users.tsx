@@ -7,6 +7,7 @@ import { RegisterUserRequestDto } from "../api/register-user-request.dto";
 import { Users } from "../api/Users";
 import { Card, CardContent, Typography } from "@mui/material";
 import { use } from "i18next";
+import { useTranslation } from "react-i18next";
 
 interface UserFormValues {
   userId: number;
@@ -20,6 +21,7 @@ interface DeleteUserProps {
 }
 
 function DeleteUser({ deleteUser }: DeleteUserProps) {
+  const { t, i18n } = useTranslation();
   return (
     <Formik
       initialValues={{ userId: 0 }}
@@ -32,16 +34,16 @@ function DeleteUser({ deleteUser }: DeleteUserProps) {
     >
       <Form className="form-selection">
         <div className="form-group">
-          <label htmlFor="userId">User ID</label>
+          <label htmlFor="userId">{t("userId")}</label>
 
-          <Field name="userId" type="text" placeholder="User ID" />
+          <Field name="userId" type="text" placeholder={t("userId")} />
           <ErrorMessage
             name="userId"
             component="div"
             className="error-message"
           />
           <div className="button-group">
-            <button type="submit">Delete User</button>
+            <button type="submit">{t("delete-user")}</button>
           </div>
         </div>
       </Form>
@@ -50,6 +52,7 @@ function DeleteUser({ deleteUser }: DeleteUserProps) {
 }
 
 const ManageUsers: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [users, setUsers] = useState<UserFormValues[]>([]);
   const apiClient = useApi();
 
@@ -94,7 +97,7 @@ const ManageUsers: React.FC = () => {
 
   return (
     <div className="manage-users">
-      <h2>Add User</h2>
+      <h2>{t("add-user")}</h2>
       <Formik
         initialValues={{
           userId: 0,
@@ -118,8 +121,8 @@ const ManageUsers: React.FC = () => {
       >
         <Form className="form-section">
           <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <Field name="username" type="text" placeholder="Username" />
+            <label htmlFor="username">{t("username")}</label>
+            <Field name="username" type="text" placeholder={t("username")} />
             <ErrorMessage
               name="username"
               component="div"
@@ -127,8 +130,12 @@ const ManageUsers: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <Field name="password" type="password" placeholder="Password" />
+            <label htmlFor="password">{t("password")}</label>
+            <Field
+              name="password"
+              type="password"
+              placeholder={t("password")}
+            />
             <ErrorMessage
               name="password"
               component="div"
@@ -136,9 +143,9 @@ const ManageUsers: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="role">Role</label>
+            <label htmlFor="role">{t("role")}</label>
             <Field as="select" name="role">
-              <option value="">Select a role</option>
+              <option value="">{t("select-role")}</option>
               <option value="ROLE_ADMIN">ROLE_ADMIN</option>
               <option value="ROLE_READER">ROLE_READER</option>
             </Field>
@@ -149,8 +156,8 @@ const ManageUsers: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <Field name="email" type="email" placeholder="Email" />
+            <label htmlFor="email">{t("email")}</label>
+            <Field name="email" type="email" placeholder={t("email")} />
             <ErrorMessage
               name="email"
               component="div"
@@ -158,26 +165,32 @@ const ManageUsers: React.FC = () => {
             />
           </div>
           <div className="button-group">
-            <button type="submit">Add User</button>
+            <button type="submit">{t("add-user")}</button>
           </div>
         </Form>
       </Formik>
 
-      <h2>Delete User</h2>
+      <h2>{t("delete-user")}</h2>
       <DeleteUser deleteUser={handleDeleteUser} />
-      <h2>All Users</h2>
+      <h2>{t("all-users")}</h2>
       <div className="button-group">
         <button type="submit" onClick={handleSeeAllUsers}>
-          See All Users
+          {t("see-all-users-button")}
         </button>
       </div>
       <div>
         {allUsers.map((user) => (
           <Card key={user.userId}>
             <CardContent>
-              <Typography variant="h5">User ID: {user.userId}</Typography>
-              <Typography variant="h5">Email: {user.email}</Typography>
-              <Typography variant="h5">Username: {user.name}</Typography>
+              <Typography variant="h5">
+                {t("userId")}: {user.userId}
+              </Typography>
+              <Typography variant="h5">
+                {t("email")}: {user.email}
+              </Typography>
+              <Typography variant="h5">
+                {t("username")}: {user.name}
+              </Typography>
             </CardContent>
           </Card>
         ))}

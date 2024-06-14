@@ -28,6 +28,7 @@ import AppBarUser from "../components/AppBarUser";
 import { GetReviewDto } from "../api/get-review.dto";
 
 const HomePage: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [books, setBooks] = useState<Book[]>([]);
   const [sortedBooks, setSortedBooks] = useState<{ [genre: string]: Book[] }>(
     {},
@@ -94,29 +95,34 @@ const HomePage: React.FC = () => {
               {selectedBook.title}
             </Typography>
             <Typography className="book-isbn">
-              ISBN: {selectedBook.isbn}
+              {t("isbn")} {selectedBook.isbn}
             </Typography>
             <Typography className="book-isbn">
-              Year Published: {selectedBook.yearPublished}
+              {t("yearPublished")} {selectedBook.yearPublished}
             </Typography>
             <Typography className="book-author">
-              Author: {selectedBook.author}
+              {t("author")} {selectedBook.author}
             </Typography>
             <Typography className="book-publisher">
-              Publisher: {selectedBook.publisher}
+              {t("publisher")} {selectedBook.publisher}
             </Typography>
             <Typography className="book-genre">
-              Genre: {selectedBook.genre}
+              {t("genre")} {selectedBook.genre}
             </Typography>
             <Typography className="book-copies">
               Available copies: {selectedBook.available}
             </Typography>
             <Typography className="book-summary">
-              Summary: {selectedBook.summary}
+              {t("summary")} {selectedBook.summary}
             </Typography>
-            <Rating name="read-only" precision={0.5} value={averageRating} readOnly />
+            <Rating
+              name="read-only"
+              precision={0.5}
+              value={averageRating}
+              readOnly
+            />
             <Typography className="book-reviews">
-              Review Comments:
+              {t("review-comments")}
               {reviews.length > 0 ? (
                 reviews.map((review, index) => (
                   <Typography key={index}>{review.comment}</Typography>
@@ -130,10 +136,10 @@ const HomePage: React.FC = () => {
               onClick={() => handleBorrowBook(selectedBook)}
               disabled={isBorrowing}
             >
-              Borrow Book
+              {t("borrow-book")}
             </button>
             <button onClick={handleCloseModal} className="button-close">
-              Close
+              {t("close")}
             </button>
           </Grid>
         </Grid>
@@ -198,8 +204,6 @@ const HomePage: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const { t, i18n } = useTranslation();
-
   return (
     <div>
       <AppBarUser />
@@ -234,8 +238,11 @@ const HomePage: React.FC = () => {
                       alt={book.title}
                       style={{ width: "100%", height: "auto" }}
                     />
-                    <button onClick={() => handleOpenBook(book)}>
-                      Open Book
+                    <button
+                      className="button"
+                      onClick={() => handleOpenBook(book)}
+                    >
+                      {t("open-book-button")}
                     </button>
                   </CardContent>
                   <Accordion>
@@ -244,13 +251,13 @@ const HomePage: React.FC = () => {
                       aria-controls="panel1a-content"
                       id="panel1a-header"
                     >
-                      <Typography>Details</Typography>
+                      <Typography>{t("details")}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                       <Typography>
-                        Year Published: {book.yearPublished} <br />
-                        Genre: {book.genre} <br />
-                        Summary: {book.summary} <br />
+                        {t("yearPublished")} {book.yearPublished} <br />
+                        {t("genre")} {book.genre} <br />
+                        {t("summary")} {book.summary} <br />
                       </Typography>
                     </AccordionDetails>
                   </Accordion>

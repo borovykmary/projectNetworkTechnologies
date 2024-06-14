@@ -5,6 +5,8 @@
 .ToolBar {
   display: flex;
   justify-content: space-between;
+  background-color: #2f3e46;
+  color: #dcd1c1;
 }
 
 .manage-section {

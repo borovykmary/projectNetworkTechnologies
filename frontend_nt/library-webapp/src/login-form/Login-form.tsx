@@ -6,7 +6,8 @@ import { useCallback, useMemo } from "react";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../api/ApiProvide";
-import {useCookies} from "react-cookie";
+import { useCookies } from "react-cookie";
+import { useTranslation } from "react-i18next";
 
 type FormValues = {
   username: string;
@@ -18,23 +19,23 @@ function LoginForm() {
   const initialValues = { username: "", password: "" };
   const navigate = useNavigate();
   const apiClient = useApi();
+  const { t, i18n } = useTranslation();
 
   const submit = useCallback(
-  (values: FormValues, formik: any) => {
-    formik.resetForm();
+    (values: FormValues, formik: any) => {
+      formik.resetForm();
 
-    apiClient.login(values).then((response) => {
-      console.log(response);
-      if (!response.success) {
-        console.log("Login failed");
-        return;
-      }
-        // setCookie("token", response.data.token, { path: "/"});
-    });
-    navigate("/home");
-  },
-  [navigate],
-);
+      apiClient.login(values).then((response) => {
+        console.log(response);
+        if (!response.success) {
+          console.log("Login failed");
+          return;
+        }
+      });
+      navigate("/home");
+    },
+    [navigate],
+  );
 
   const validationSchema = useMemo(
     () =>
@@ -52,8 +53,8 @@ function LoginForm() {
     <div className="login-page">
       <div className="login-content">
         <div className="login-text">
-          <h1>Log In</h1>
-          <p>Welcome back, dear user!</p>
+          <h1>{t("login")}</h1>
+          <p>{t("welcome-text")}</p>
         </div>
 
         <Formik
@@ -92,13 +93,14 @@ function LoginForm() {
               />
               <Button
                 variant="contained"
+                style={{ backgroundColor: "#2f3e46", color: "#fbf7f2" }}
                 type="submit"
                 form="loginForm"
                 disabled={!formik.isValid && formik.dirty}
                 endIcon={<LoginIcon />}
               >
                 {" "}
-                LogIn{" "}
+                {t("login")}{" "}
               </Button>
             </form>
           )}
