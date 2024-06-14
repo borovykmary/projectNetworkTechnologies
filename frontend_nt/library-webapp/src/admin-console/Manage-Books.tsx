@@ -15,8 +15,9 @@ import "./ManageBooks.css";
 import { useApi } from "../api/ApiProvide";
 import { CreateBookRequestDto } from "../api/add-book-request.dto";
 import { AddBookDetailsRequestDto } from "../api/add-bookdetails-request.dto";
+import { Book } from "../api/Book";
 
-interface BookFormValues {
+/*interface BookFormValues {
   isbn: string;
   title: string;
   author: string;
@@ -29,7 +30,7 @@ interface BookDetailsFormValues {
   genre: string;
   summary: string;
   coverImageUrl: string;
-}
+}*/
 interface DeleteBookProps {
   deleteBook: (bookId: number) => void;
 }
@@ -63,11 +64,11 @@ function DeleteBook({ deleteBook }: DeleteBookProps) {
 }
 
 const ManageBooks: React.FC = () => {
-  const [books, setBooks] = useState<BookFormValues[]>([]);
-  const [bookDetails, setBookDetails] = useState<BookDetailsFormValues[]>([]);
+  const [books, setBooks] = useState<CreateBookRequestDto[]>([]);
+  const [bookDetails, setBookDetails] = useState<AddBookDetailsRequestDto[]>([]);
   const apiClient = useApi();
 
-  const addBook = async (values: BookFormValues) => {
+  const addBook = async (values: CreateBookRequestDto) => {
     const data: CreateBookRequestDto = {
       isbn: values.isbn,
       title: values.title,
@@ -91,12 +92,12 @@ const ManageBooks: React.FC = () => {
     }
   };
 
-  const addBookDetails = async (values: BookDetailsFormValues) => {
+  const addBookDetails = async (values: AddBookDetailsRequestDto) => {
     const data: AddBookDetailsRequestDto = {
       bookId: values.bookId,
       genre: values.genre,
       summary: values.summary,
-      coverImageURL: values.coverImageUrl,
+      coverImageUrl: values.coverImageUrl,
     };
     try {
       const response = await apiClient.addBookDetails(data);
@@ -121,6 +122,17 @@ const ManageBooks: React.FC = () => {
       alert("Book is successfully deleted");
     } else {
       alert("Book deletion failed");
+    }
+  };
+  const [allBooks, setAllBooks] = useState<Book[]>([]);
+
+  const handleSeeAllBooks = async () => {
+    const response = await apiClient.getBooks();
+    console.log(response.data)
+    if (response.success) {
+      setAllBooks(response.data);
+    } else {
+      alert("Failed to retrieve books");
     }
   };
 
@@ -233,9 +245,9 @@ const ManageBooks: React.FC = () => {
         }}
         validationSchema={Yup.object({
           bookId: Yup.number().required("Required"),
-          genre: Yup.string(),
-          summary: Yup.string(),
-          coverImageUrl: Yup.string().url("Invalid URL"),
+          genre: Yup.string().required("Required"),
+          summary: Yup.string().required("Required"),
+          coverImageUrl: Yup.string().url("Invalid URL").required("Required"),
         })}
         onSubmit={(values, { resetForm }) => {
           addBookDetails(values);
@@ -292,6 +304,31 @@ const ManageBooks: React.FC = () => {
       <h2>Delete Book</h2>
 
       <DeleteBook deleteBook={handleDeleteBook} />
+      <h2>All Books</h2>
+      <div className="button-group">
+        <button type="submit" onClick={handleSeeAllBooks}>
+          See All Books
+        </button>
+      </div>
+      <div>
+        {allBooks.map((book) => (
+          <Card key={book.id}>
+            <CardContent>
+              <Typography variant="h5">Book ID: {book.id}</Typography>
+              <Typography variant="h5">ISBN: {book.isbn}</Typography>
+              <Typography variant="h5">Title: {book.title}</Typography>
+              <Typography variant="h5">Author: {book.author}</Typography>
+              <Typography variant="h5">Publisher: {book.publisher}</Typography>
+              <Typography variant="h5">
+                Year Published: {book.yearPublished}
+              </Typography>
+              <Typography variant="h5">
+                Is Available: {book.available ? 'Available' : 'Not Available'}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

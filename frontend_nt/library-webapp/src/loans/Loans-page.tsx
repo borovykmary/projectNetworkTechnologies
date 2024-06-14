@@ -1,8 +1,6 @@
 import React from "react";
 import "./Loans-page.css";
 import {
-  AppBar,
-  Toolbar,
   Card,
   CardContent,
   CardMedia,
@@ -12,21 +10,28 @@ import {
   AccordionSummary,
   AccordionDetails,
   Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  Rating,
+  DialogActions,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useNavigate } from "react-router-dom";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import { useEffect, useState } from "react";
 import { Loans } from "../api/Loans";
 import { useApi } from "../api/ApiProvide";
 import { Book } from "../api/Book";
-import { BookDetails } from "../api/BookDetails";
 import AppBarUser from "../components/AppBarUser";
+import { GetReviewDto } from "../api/get-review.dto";
 
 const LoansPage: React.FC = () => {
   const [loans, setLoans] = useState<Loans[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
+  const [open, setOpen] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState<Loans | null>(null);
+  const [review, setReview] = useState({ comment: "", rating: 0 });
+
   const apiClient = useApi();
 
   useEffect(() => {
@@ -85,8 +90,36 @@ const LoansPage: React.FC = () => {
       }
     }
   };
-  const handleAddReview = (id: number) => {
-    console.log(`Add review for book with id ${id}`);
+
+  const handleOpenAddReview = (loan: Loans) => {
+    setSelectedLoan(loan);
+    setOpen(true);
+  };
+  const handleCloseAddReview = () => {
+    setOpen(false);
+  };
+  const handleReviewSubmit = async () => {
+    if (selectedLoan) {
+      const today = new Date();
+      const reviewDate = today.toISOString().split("T")[0];
+      const reviewDto = {
+        comment: review.comment,
+        rating: review.rating,
+        reviewDate: reviewDate,
+      };
+      const response = await apiClient.addReview(
+        reviewDto,
+        selectedLoan.bookId,
+      );
+      if (response.success) {
+        alert("Review added successfully");
+      } else if (response.status === 409) {
+        alert("You can only add one review per book.");
+      } else {
+        alert("Failed to add review");
+      }
+    }
+    handleCloseAddReview();
   };
 
   return (
@@ -149,7 +182,7 @@ const LoansPage: React.FC = () => {
                       Return
                     </Button>
                     <Button
-                      onClick={() => handleAddReview(loan.loanId)}
+                      onClick={() => handleOpenAddReview(loan)}
                       variant="outlined"
                     >
                       Add Review
@@ -161,6 +194,33 @@ const LoansPage: React.FC = () => {
           </Card>
         );
       })}
+
+      <Dialog open={open} onClose={handleCloseAddReview}>
+        <DialogTitle>Add Review</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Comment"
+            type="text"
+            fullWidth
+            value={review.comment}
+            onChange={(e) => setReview({ ...review, comment: e.target.value })}
+          />
+          <Rating
+            name="simple-controlled"
+            value={review.rating}
+            onChange={(event, newValue) => {
+              setReview({ ...review, rating: newValue as number });
+            }}
+            precision={0.5}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAddReview}>Close</Button>
+          <Button onClick={handleReviewSubmit}>Submit</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

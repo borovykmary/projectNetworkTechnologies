@@ -8,6 +8,7 @@ import { RegisterUserRequestDto } from "./register-user-request.dto";
 import { AddBookDetailsRequestDto } from "./add-bookdetails-request.dto";
 import { CreateBookRequestDto } from "./add-book-request.dto";
 import { GetReviewDto } from "./get-review.dto";
+import { AddBookReviewRequestDto } from "./add-review-request.dto";
 
 type ClientResponse = {
   success: boolean;
@@ -508,6 +509,67 @@ export class LibraryClient {
 
       const response: AxiosResponse = await this.client.get(
         `/users`,
+        axiosConfig,
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
+
+  public async addReview(
+    data: AddBookReviewRequestDto,
+    bookId: number,
+  ): Promise<ClientResponse> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response: AxiosResponse = await this.client.post(
+        `/reviews/${bookId}/create`,
+        data,
+        axiosConfig,
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: axiosError.response?.data,
+        status: axiosError.response?.status || 500,
+      };
+    }
+  }
+  public async getAllReviews(): Promise<ClientResponse> {
+    try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response: AxiosResponse = await this.client.get(
+        `/api/reviews`,
         axiosConfig,
       );
 

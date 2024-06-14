@@ -109,12 +109,12 @@ const HomePage: React.FC = () => {
               Genre: {selectedBook.genre}
             </Typography>
             <Typography className="book-copies">
-              Available copies: {selectedBook.availableCopies}
+              Available copies: {selectedBook.available}
             </Typography>
             <Typography className="book-summary">
               Summary: {selectedBook.summary}
             </Typography>
-            <Rating name="read-only" value={averageRating} readOnly />
+            <Rating name="read-only" precision={0.5} value={averageRating} readOnly />
             <Typography className="book-reviews">
               Review Comments:
               {reviews.length > 0 ? (

@@ -45,9 +45,9 @@ public class ReviewsController {
         return reviewService.getForOne(bookIdInt);
     }
 
-    @PostMapping("/{bookId}/review")
+    @PostMapping("/{bookId}/create")
     public ResponseEntity<CreateReviewResponseDto> create(@RequestBody CreateReviewDto review, HttpServletRequest request, @PathVariable String bookId){
-        var bookIdLong = Long.parseLong(bookId.substring(1, bookId.length() - 1));
+        var bookIdInt = Integer.parseInt(bookId);
 
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
@@ -58,7 +58,7 @@ public class ReviewsController {
         var userEntity = userRepository.findByuserId(userId)
                 .orElseThrow(() -> NotFoundException.create("User", userId));
 
-        var book = bookRepository.findById(bookIdLong).orElseThrow(() -> NotFoundException.create("Book", bookIdLong));
+        var book = bookRepository.findById(bookIdInt).orElseThrow(() -> NotFoundException.create("Book", bookIdInt));
         var newReview = reviewService.create(review, userEntity, book);
         return new ResponseEntity<>(newReview, HttpStatus.CREATED);
     }

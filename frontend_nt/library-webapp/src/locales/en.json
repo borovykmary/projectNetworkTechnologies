@@ -1,4 +1,11 @@
 {
   "library": "My library",
-  "books": "All Books"
+  "books": "All Books",
+  "admin-console": "Admin Console",
+  "your-books": "Your Books",
+  "logout": "Log Out",
+  "login": "Log In",
+  "manage-books": "Manage Books",
+  "manage-users": "Manage Users",
+  "manage-loans": "Manage Loans"
 }
