@@ -1,16 +1,7 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Rating,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Card, CardContent, Typography } from "@mui/material";
 import "./ManageBooks.css";
 import { useApi } from "../api/ApiProvide";
 import { CreateBookRequestDto } from "../api/add-book-request.dto";
@@ -18,31 +9,17 @@ import { AddBookDetailsRequestDto } from "../api/add-bookdetails-request.dto";
 import { Book } from "../api/Book";
 import { useTranslation } from "react-i18next";
 
-/*interface BookFormValues {
-  isbn: string;
-  title: string;
-  author: string;
-  publisher: string;
-  yearPublished: number;
-  availableCopies: number;
-}
-interface BookDetailsFormValues {
-  bookId: number;
-  genre: string;
-  summary: string;
-  coverImageUrl: string;
-}*/
 interface DeleteBookProps {
   deleteBook: (bookId: number) => void;
 }
 
 function DeleteBook({ deleteBook }: DeleteBookProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   return (
     <Formik
       initialValues={{ deleteBook: 0 }}
       onSubmit={(values, { setSubmitting }) => {
-        if (window.confirm("Are you sure you want to delete this book?")) {
+        if (window.confirm(t("alert8"))) {
           deleteBook(values.deleteBook);
         }
         setSubmitting(false);
@@ -50,7 +27,7 @@ function DeleteBook({ deleteBook }: DeleteBookProps) {
     >
       <Form className="form-section">
         <div className="form-group">
-          <Field name="bookId" type="text" placeholder="Book ID" />
+          <Field name="bookId" type="text" placeholder={t("bookId")} />
           <ErrorMessage
             name="bookId"
             component="div"
@@ -66,7 +43,7 @@ function DeleteBook({ deleteBook }: DeleteBookProps) {
 }
 
 const ManageBooks: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [books, setBooks] = useState<CreateBookRequestDto[]>([]);
   const [bookDetails, setBookDetails] = useState<AddBookDetailsRequestDto[]>(
     [],
@@ -87,10 +64,10 @@ const ManageBooks: React.FC = () => {
 
       if (response === 201) {
         setBooks([...books, values]);
-        alert("Book is successfully created");
+        alert(t("alert9"));
       } else {
         console.error(`Book creation failed with status code ${response}`);
-        alert("Book creation failed");
+        alert(t("alert10"));
       }
     } catch (error) {
       console.error(error);
@@ -109,12 +86,12 @@ const ManageBooks: React.FC = () => {
 
       if (response === 201) {
         setBookDetails([...bookDetails, values]);
-        alert("Book Details is successfully updated");
+        alert(t("alert11"));
       } else {
         console.error(
           `Book details creation failed with status code ${response}`,
         );
-        alert("Book details creation failed");
+        alert(t("alert12"));
       }
     } catch (error) {
       console.error(error);
@@ -124,9 +101,9 @@ const ManageBooks: React.FC = () => {
   const handleDeleteBook = async (bookId: number) => {
     const response = await apiClient.deleteBook(bookId);
     if (response.success) {
-      alert("Book is successfully deleted");
+      alert(t("alert13"));
     } else {
-      alert("Book deletion failed");
+      alert(t("alert14"));
     }
   };
   const [allBooks, setAllBooks] = useState<Book[]>([]);
@@ -137,7 +114,7 @@ const ManageBooks: React.FC = () => {
     if (response.success) {
       setAllBooks(response.data);
     } else {
-      alert("Failed to retrieve books");
+      alert(t("alert15"));
     }
   };
 
@@ -154,16 +131,16 @@ const ManageBooks: React.FC = () => {
           availableCopies: 0,
         }}
         validationSchema={Yup.object({
-          isbn: Yup.string().required("Required"),
-          title: Yup.string().required("Required"),
-          author: Yup.string().required("Required"),
-          publisher: Yup.string().required("Required"),
+          isbn: Yup.string().required(t("required")),
+          title: Yup.string().required(t("required")),
+          author: Yup.string().required(t("required")),
+          publisher: Yup.string().required(t("required")),
           yearPublished: Yup.number()
-            .typeError("Must be a number")
-            .required("Required"),
+            .typeError(t("must-be-number"))
+            .required(t("required")),
           availableCopies: Yup.number()
-            .typeError("Must be a number")
-            .required("Required"),
+            .typeError(t("must-be-number"))
+            .required(t("required")),
         })}
         onSubmit={(values, { resetForm }) => {
           addBook(values);
@@ -181,8 +158,8 @@ const ManageBooks: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="title">Title</label>
-            <Field name="title" type="text" placeholder="Title" />
+            <label htmlFor="title">{t("title")}</label>
+            <Field name="title" type="text" placeholder={t("title")} />
             <ErrorMessage
               name="title"
               component="div"
@@ -221,11 +198,11 @@ const ManageBooks: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="availableCopies">Available Copies</label>
+            <label htmlFor="availableCopies">{t("available-copies")}</label>
             <Field
               name="availableCopies"
               type="number"
-              placeholder="Available Copies"
+              placeholder={t("available-copies")}
             />
             <ErrorMessage
               name="availableCopies"
@@ -261,8 +238,8 @@ const ManageBooks: React.FC = () => {
       >
         <Form className="form-section">
           <div className="form-group">
-            <label htmlFor="bookId">Book ID</label>
-            <Field name="bookId" type="text" placeholder="Book ID" />
+            <label htmlFor="bookId">{t("bookId")}</label>
+            <Field name="bookId" type="text" placeholder={t("bookId")} />
             <ErrorMessage
               name="bookId"
               component="div"
@@ -288,11 +265,11 @@ const ManageBooks: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="coverImageUrl">Cover Image URL</label>
+            <label htmlFor="coverImageUrl">{t("cover-image-url")}</label>
             <Field
               name="coverImageUrl"
               type="text"
-              placeholder="Cover Image URL"
+              placeholder={t("cover-image-url")}
             />
             <ErrorMessage
               name="coverImageUrl"
@@ -301,7 +278,7 @@ const ManageBooks: React.FC = () => {
             />
           </div>
           <div className="button-group">
-            <button type="submit">Update Book</button>
+            <button type="submit">{t("update-book")}</button>
           </div>
         </Form>
       </Formik>
@@ -319,16 +296,29 @@ const ManageBooks: React.FC = () => {
         {allBooks.map((book) => (
           <Card key={book.id}>
             <CardContent>
-              <Typography variant="h5">Book ID: {book.id}</Typography>
-              <Typography variant="h5">ISBN: {book.isbn}</Typography>
-              <Typography variant="h5">Title: {book.title}</Typography>
-              <Typography variant="h5">Author: {book.author}</Typography>
-              <Typography variant="h5">Publisher: {book.publisher}</Typography>
               <Typography variant="h5">
-                Year Published: {book.yearPublished}
+                {t("bookId")}: {book.id}
               </Typography>
               <Typography variant="h5">
-                Is Available: {book.available ? "Available" : "Not Available"}
+                {t("isbn")} {book.isbn}
+              </Typography>
+              <Typography variant="h5">
+                {t("title")}: {book.title}
+              </Typography>
+              <Typography variant="h5">
+                {t("author")} {book.author}
+              </Typography>
+              <Typography variant="h5">
+                {t("publisher")} {book.publisher}
+              </Typography>
+              <Typography variant="h5">
+                {t("yearPublished")} {book.yearPublished}
+              </Typography>
+              <Typography variant="h5">
+                {t("is-available")}:{" "}
+                {book.available
+                  ? t("availability-true")
+                  : t("availability-false")}
               </Typography>
             </CardContent>
           </Card>

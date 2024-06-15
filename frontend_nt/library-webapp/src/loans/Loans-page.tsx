@@ -23,7 +23,7 @@ import { Loans } from "../api/Loans";
 import { useApi } from "../api/ApiProvide";
 import { Book } from "../api/Book";
 import AppBarUser from "../components/AppBarUser";
-import { GetReviewDto } from "../api/get-review.dto";
+import { useTranslation } from "react-i18next";
 
 const LoansPage: React.FC = () => {
   const [loans, setLoans] = useState<Loans[]>([]);
@@ -31,6 +31,7 @@ const LoansPage: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState<Loans | null>(null);
   const [review, setReview] = useState({ comment: "", rating: 0 });
+  const { t } = useTranslation();
 
   const apiClient = useApi();
 
@@ -56,8 +57,6 @@ const LoansPage: React.FC = () => {
             );
             const bookDetail = bookDetailsResponses[index].data;
 
-            // If the book was found, add the coverImageURL to it
-
             book.coverImageUrl = bookDetail?.coverImageUrl;
 
             console.log(book);
@@ -78,15 +77,13 @@ const LoansPage: React.FC = () => {
     fetchLoans();
   }, [apiClient]);
   const handleReturn = async (loanId: number) => {
-    const userConfirmation = window.confirm(
-      "Are you sure you want to return this book?",
-    );
+    const userConfirmation = window.confirm(t("alert22"));
     if (userConfirmation) {
       const response = await apiClient.returnBook(loanId);
       if (response.status === 200) {
-        alert("Book return was requested");
+        alert(t("alert23"));
       } else {
-        alert("Failed to request book return");
+        alert(t("alert24"));
       }
     }
   };
@@ -112,11 +109,11 @@ const LoansPage: React.FC = () => {
         selectedLoan.bookId,
       );
       if (response.success) {
-        alert("Review added successfully");
+        alert(t("alert25"));
       } else if (response.status === 409) {
-        alert("You can only add one review per book.");
+        alert(t("alert26"));
       } else {
-        alert("Failed to add review");
+        alert(t("alert27"));
       }
     }
     handleCloseAddReview();
@@ -152,7 +149,7 @@ const LoansPage: React.FC = () => {
                     {book?.author}
                   </Typography>
                   <Typography variant="subtitle1" color="text.secondary">
-                    Status: {loan.status}
+                    {t("status")}: {loan.status}
                   </Typography>
                 </CardContent>
 
@@ -162,30 +159,30 @@ const LoansPage: React.FC = () => {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                   >
-                    <Typography>Borrowing Details</Typography>
+                    <Typography>{t("borrowing-details")}</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <Typography variant="subtitle1" color="text.secondary">
-                      Borrowed: {loan.loanDate}
+                      {t("borrowing-details")}: {loan.loanDate}
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary">
-                      Due date: {loan.dueDate}
+                      {t("due-date")}: {loan.dueDate}
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary">
-                      Return: {loan.returnDate}
+                      {t("return-date")}: {loan.returnDate}
                     </Typography>
                     <Button
                       onClick={() => handleReturn(loan.loanId)}
                       variant="outlined"
                       disabled={loan.status !== "BORROWED"}
                     >
-                      Return
+                      {t("return-book")}
                     </Button>
                     <Button
                       onClick={() => handleOpenAddReview(loan)}
                       variant="outlined"
                     >
-                      Add Review
+                      {t("add-review")}
                     </Button>
                   </AccordionDetails>
                 </Accordion>
@@ -196,7 +193,7 @@ const LoansPage: React.FC = () => {
       })}
 
       <Dialog open={open} onClose={handleCloseAddReview}>
-        <DialogTitle>Add Review</DialogTitle>
+        <DialogTitle>{t("add-review")}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -217,8 +214,8 @@ const LoansPage: React.FC = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAddReview}>Close</Button>
-          <Button onClick={handleReviewSubmit}>Submit</Button>
+          <Button onClick={handleCloseAddReview}>{t("close")}</Button>
+          <Button onClick={handleReviewSubmit}>{t("submit")}</Button>
         </DialogActions>
       </Dialog>
     </div>

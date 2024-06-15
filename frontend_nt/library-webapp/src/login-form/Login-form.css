@@ -1,4 +1,3 @@
-/* Login-form.css */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -23,7 +22,8 @@
   align-items: center;
   height: 100vh;
   padding: 0 2rem;
-  background-color: #2f3e46;
+  background-image: url("./bg_login_dark.PNG");
+  background-size: cover;
 }
 
 .login-content {

@@ -2,7 +2,6 @@ import { AppBar, Toolbar, Typography, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { Link } from "react-router-dom";
-import { t } from "i18next";
 import { useTranslation } from "react-i18next";
 import "./AppBarUser.css";
 import Flag from "@mui/icons-material/FlagRounded";
@@ -21,7 +20,6 @@ const AppBarUser = () => {
           component="div"
           style={{ marginRight: "20px" }}
         >
-          <MenuBookRounded />
           {t("library")}
         </Typography>
         <Grid container direction="column" alignItems="center">

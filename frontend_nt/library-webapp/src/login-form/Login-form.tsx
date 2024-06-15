@@ -6,7 +6,6 @@ import { useCallback, useMemo } from "react";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../api/ApiProvide";
-import { useCookies } from "react-cookie";
 import { useTranslation } from "react-i18next";
 
 type FormValues = {
@@ -15,11 +14,10 @@ type FormValues = {
 };
 
 function LoginForm() {
-  // const [cookies, setCookie] = useCookies(['token']);
   const initialValues = { username: "", password: "" };
   const navigate = useNavigate();
   const apiClient = useApi();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const submit = useCallback(
     (values: FormValues, formik: any) => {
@@ -40,10 +38,10 @@ function LoginForm() {
   const validationSchema = useMemo(
     () =>
       yup.object().shape({
-        username: yup.string().required("Username is required"),
+        username: yup.string().required(t("required")),
         password: yup
           .string()
-          .required("Password is required")
+          .required(t("required"))
           .min(8, "Password must be at least 8 characters"),
       }),
     [],
@@ -73,7 +71,7 @@ function LoginForm() {
             >
               <TextField
                 id="username"
-                label="Username"
+                label={t("username")}
                 variant="outlined"
                 name="username"
                 onChange={formik.handleChange}
@@ -83,7 +81,7 @@ function LoginForm() {
               />
               <TextField
                 id="password"
-                label="Password"
+                label={t("password")}
                 variant="outlined"
                 type="password"
                 onChange={formik.handleChange}

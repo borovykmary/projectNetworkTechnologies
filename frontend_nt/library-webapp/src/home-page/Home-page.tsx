@@ -28,7 +28,7 @@ import AppBarUser from "../components/AppBarUser";
 import { GetReviewDto } from "../api/get-review.dto";
 
 const HomePage: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [books, setBooks] = useState<Book[]>([]);
   const [sortedBooks, setSortedBooks] = useState<{ [genre: string]: Book[] }>(
     {},
@@ -44,10 +44,10 @@ const HomePage: React.FC = () => {
     const response = await apiClient.borrowBook(book.id);
     console.log("Borrow Book id:", book.id);
     if (response.success) {
-      alert("Book borrow requested");
+      alert(t("alert28"));
       setIsBorrowing(true);
     } else {
-      alert("Failed to borrow book");
+      alert(t("alert29"));
     }
     setIsBorrowing(false);
   };
@@ -110,7 +110,10 @@ const HomePage: React.FC = () => {
               {t("genre")} {selectedBook.genre}
             </Typography>
             <Typography className="book-copies">
-              Available copies: {selectedBook.available}
+              {t("is-available")}:{" "}
+              {selectedBook.available
+                ? t("availability-true")
+                : t("availability-false")}
             </Typography>
             <Typography className="book-summary">
               {t("summary")} {selectedBook.summary}

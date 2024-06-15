@@ -21,12 +21,12 @@ interface DeleteUserProps {
 }
 
 function DeleteUser({ deleteUser }: DeleteUserProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   return (
     <Formik
       initialValues={{ userId: 0 }}
       onSubmit={(values, { setSubmitting }) => {
-        if (window.confirm("Are you sure you want to delete this user?")) {
+        if (window.confirm(t("alert1"))) {
           deleteUser(values.userId);
         }
         setSubmitting(false);
@@ -52,7 +52,7 @@ function DeleteUser({ deleteUser }: DeleteUserProps) {
 }
 
 const ManageUsers: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [users, setUsers] = useState<UserFormValues[]>([]);
   const apiClient = useApi();
 
@@ -68,10 +68,12 @@ const ManageUsers: React.FC = () => {
 
     if (response === 201) {
       setUsers([...users, values]);
-      alert("User is successfully added");
+      alert(t("alert2"));
+    } else if (response === 403) {
+      alert(t("alert4"));
     } else {
       console.error(`User registration failed with status code ${response}`);
-      alert("User registration failed");
+      alert(t("alert3"));
     }
   };
   const [allUsers, setAllUsers] = useState<Users[]>([]);
@@ -81,17 +83,17 @@ const ManageUsers: React.FC = () => {
     if (response.success) {
       setAllUsers(response.data);
     } else if (response.status === 403) {
-      alert("You do not have ADMIN permissions");
+      alert(t("alert4"));
     } else {
-      alert("Failed to retrieve users");
+      alert(t("alert5"));
     }
   };
   const handleDeleteUser = async (userId: number) => {
     const response = await apiClient.deleteUser(userId);
     if (response.success) {
-      alert("User is successfully deleted");
+      alert(t("alert6"));
     } else {
-      alert("User deletion failed");
+      alert(t("alert7"));
     }
   };
 
@@ -107,12 +109,10 @@ const ManageUsers: React.FC = () => {
           email: "",
         }}
         validationSchema={Yup.object({
-          username: Yup.string().required("Required"),
-          password: Yup.string().required("Required"),
-          role: Yup.string().required("Required"),
-          email: Yup.string()
-            .email("Invalid email address")
-            .required("Required"),
+          username: Yup.string().required(t("required")),
+          password: Yup.string().required(t("required")),
+          role: Yup.string().required(t("required")),
+          email: Yup.string().email(t("invalid-email")).required(t("required")),
         })}
         onSubmit={(values, { resetForm }) => {
           addUser(values);
