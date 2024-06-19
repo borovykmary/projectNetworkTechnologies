@@ -42,7 +42,7 @@ function LoginForm() {
         password: yup
           .string()
           .required(t("required"))
-          .min(8, "Password must be at least 8 characters"),
+          .min(8, t("alert21")),
       }),
     [],
   );

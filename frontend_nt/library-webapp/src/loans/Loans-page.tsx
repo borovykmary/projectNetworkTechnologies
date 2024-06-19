@@ -122,7 +122,10 @@ const LoansPage: React.FC = () => {
   return (
     <div>
       <AppBarUser />
-      {loans.map((loan) => {
+      {loans.length === 0 ? (
+          <p className={"no-loans-message"}>{t("You do not have any interactions with books yet.")}</p>
+      ) : (
+      loans.map((loan) => {
         const book = books.find((book) => book.id === loan.bookId);
         return (
           <Card
@@ -190,7 +193,8 @@ const LoansPage: React.FC = () => {
             </Grid>
           </Card>
         );
-      })}
+      })
+      )}
 
       <Dialog open={open} onClose={handleCloseAddReview}>
         <DialogTitle>{t("add-review")}</DialogTitle>

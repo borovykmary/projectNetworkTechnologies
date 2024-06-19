@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import {
-  Button,
   Card,
   CardContent,
-  TextField,
   Typography,
 } from "@mui/material";
 import "./ManageLoans.css";
-import { Formik, Form, Field, useFormikContext, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useApi } from "../api/ApiProvide";
 import { Loans } from "../api/Loans";
 import * as Yup from "yup";

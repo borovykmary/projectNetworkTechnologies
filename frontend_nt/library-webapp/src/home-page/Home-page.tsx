@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  AppBar,
-  Toolbar,
   Typography,
   Grid,
   Card,
@@ -9,20 +7,14 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "./Home-page.css";
 import { useNavigate } from "react-router-dom";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import Rating from "@mui/material/Rating";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useApi } from "../api/ApiProvide";
 import { Book } from "../api/Book";
-import { BookDetails } from "../api/BookDetails";
-import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AppBarUser from "../components/AppBarUser";
 import { GetReviewDto } from "../api/get-review.dto";

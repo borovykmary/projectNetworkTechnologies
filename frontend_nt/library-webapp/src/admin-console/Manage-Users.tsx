@@ -6,16 +6,8 @@ import { useApi } from "../api/ApiProvide";
 import { RegisterUserRequestDto } from "../api/register-user-request.dto";
 import { Users } from "../api/Users";
 import { Card, CardContent, Typography } from "@mui/material";
-import { use } from "i18next";
 import { useTranslation } from "react-i18next";
 
-interface UserFormValues {
-  userId: number;
-  username: string;
-  password: string;
-  role: string;
-  email: string;
-}
 interface DeleteUserProps {
   deleteUser: (userId: number) => void;
 }
@@ -53,10 +45,10 @@ function DeleteUser({ deleteUser }: DeleteUserProps) {
 
 const ManageUsers: React.FC = () => {
   const { t } = useTranslation();
-  const [users, setUsers] = useState<UserFormValues[]>([]);
+  const [users, setUsers] = useState<RegisterUserRequestDto[]>([]);
   const apiClient = useApi();
 
-  const addUser = async (values: UserFormValues) => {
+  const addUser = async (values: RegisterUserRequestDto) => {
     const data: RegisterUserRequestDto = {
       username: values.username,
       password: values.password,
@@ -96,6 +88,7 @@ const ManageUsers: React.FC = () => {
       alert(t("alert7"));
     }
   };
+
 
   return (
     <div className="manage-users">
