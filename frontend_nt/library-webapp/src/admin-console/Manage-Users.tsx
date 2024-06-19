@@ -181,9 +181,6 @@ const ManageUsers: React.FC = () => {
               <Typography variant="h5">
                 {t("email")}: {user.email}
               </Typography>
-              <Typography variant="h5">
-                {t("username")}: {user.name}
-              </Typography>
             </CardContent>
           </Card>
         ))}

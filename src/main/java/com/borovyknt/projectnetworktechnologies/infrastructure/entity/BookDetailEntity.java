@@ -12,7 +12,7 @@ public class BookDetailEntity {
     @Column(name = "id")
     private int id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private BookEntity book;
 
